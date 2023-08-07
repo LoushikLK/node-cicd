@@ -15,6 +15,11 @@ export default function envConfig() {
     AppServiceEmail: process.env.SERVICE_EMAIL || "",
     AppServiceEmailPassword: process.env.EMAIL_SERVICE_PASSWORD || "",
 
+    //github o auth
+    GithubOAuthClientSecret: process.env.GITHUB_OAUTH_CLIENT_SECRET || "",
+    GithubOAuthClientId: process.env.GITHUB_OAUTH_CLIENT_ID || "",
+    GithubRegisterCallbackURL: process.env.GITHUB_REGISTER_CALLBACK_URL || "",
+
     //APP DETAILS
 
     APP_NAME: process.env.APP_NAME || "",

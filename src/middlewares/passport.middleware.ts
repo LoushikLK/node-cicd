@@ -1,16 +1,17 @@
 import { InternalServerError, NotFound } from "http-errors";
 import passport from "passport";
+import {
+  Strategy as GitHubStrategy,
+  Profile as GithubProfile,
+} from "passport-github2";
 
 import {
   Strategy as GoogleStrategy,
   Profile,
   VerifyCallback,
 } from "passport-google-oauth20";
-import {
-  GoogleClientId,
-  GoogleClientSecret,
-  GoogleRegisterCallbackURL,
-} from "../configs/env.config";
+
+import envConfig from "../configs/env.config";
 import { UserModel } from "../schemas/user";
 
 export default class PassportService {
@@ -22,9 +23,9 @@ export default class PassportService {
       "google-register",
       new GoogleStrategy(
         {
-          clientID: GoogleClientId,
-          clientSecret: GoogleClientSecret,
-          callbackURL: GoogleRegisterCallbackURL,
+          clientID: envConfig().GoogleClientId,
+          clientSecret: envConfig().GoogleClientSecret,
+          callbackURL: envConfig().GoogleRegisterCallbackURL,
         },
         async (
           accessToken: string,
@@ -70,9 +71,9 @@ export default class PassportService {
       "google-login",
       new GoogleStrategy(
         {
-          clientID: GoogleClientId,
-          clientSecret: GoogleClientSecret,
-          callbackURL: GoogleRegisterCallbackURL,
+          clientID: envConfig().GoogleClientId,
+          clientSecret: envConfig().GoogleClientSecret,
+          callbackURL: envConfig().GoogleRegisterCallbackURL,
         },
         async (
           accessToken: string,
@@ -99,6 +100,57 @@ export default class PassportService {
             );
 
             if (!user) return new NotFound("User not found.");
+            done(null, user);
+          } catch (error) {
+            if (error instanceof Error) {
+              done(error);
+            }
+            done(new Error("Something went wrong"));
+          }
+        }
+      )
+    );
+  }
+
+  /**
+   * passportGithubRegisterStrategy
+   */
+  public async passportGithubRegisterStrategy() {
+    passport.use(
+      new GitHubStrategy(
+        {
+          clientID: envConfig().GithubOAuthClientId,
+          clientSecret: envConfig().GithubOAuthClientSecret,
+          callbackURL: envConfig().GithubRegisterCallbackURL,
+        },
+        async (
+          accessToken: string,
+          refreshToken: string,
+          profile: GithubProfile,
+          done: VerifyCallback
+        ) => {
+          try {
+            //verify and create user
+
+            console.log({ accessToken });
+            console.log({ profile });
+
+            const user = await UserModel.create(
+              {
+                googleId: profile.id,
+                email: profile?.emails?.[0].value,
+                emailVerified: true,
+                displayName: profile.displayName,
+                googleAccessToken: accessToken,
+                photoUrl: profile.photos?.[0].value,
+              },
+              {
+                runValidators: true,
+                lean: true,
+              }
+            );
+
+            if (!user) return new InternalServerError("User not registered.");
             done(null, user);
           } catch (error) {
             if (error instanceof Error) {
