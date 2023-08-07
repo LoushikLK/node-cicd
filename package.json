@@ -1,0 +1,45 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon --watch src/**/* -e ts,json --exec node --inspect -r ts-node/register src/index.ts",
+    "start": "node ./build/index.js",
+    "build": "rm -rf ./build && tsc && rm -rf ./src"
+  },
+  "keywords": [],
+  "author": "loushiklk",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.4.2",
+    "nodemailer": "^6.9.4",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "ssh2": "^1.14.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.13",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.17",
+    "@types/express-fileupload": "^1.4.1",
+    "@types/express-session": "^1.17.7",
+    "@types/http-errors": "^2.0.1",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "^20.4.8",
+    "@types/nodemailer": "^6.4.9",
+    "@types/passport-google-oauth20": "^2.0.11",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
