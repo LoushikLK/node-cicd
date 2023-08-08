@@ -2,7 +2,8 @@ import express from "express";
 import { createServer, Server } from "http";
 import envConfig from "./configs/env.config";
 import connectToDb from "./db/connect";
-import { routerHandler } from "./helpers";
+
+import routerHandler from "./helpers/routeParser.helper";
 import bottomLevelMiddleware from "./middlewares/bottom.middleware";
 import topLevelMiddleware from "./middlewares/toplevel.middleware";
 require("dotenv").config();

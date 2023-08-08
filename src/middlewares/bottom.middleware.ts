@@ -1,5 +1,5 @@
 import { Application } from "express";
-import { errorHandler } from "../helpers";
+import errorHandler from "../helpers/error.helper";
 
 const bottomLevelMiddleware = (app: Application) => {
   //handle not created route
