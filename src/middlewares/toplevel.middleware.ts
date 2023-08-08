@@ -5,11 +5,12 @@ import session from "express-session";
 import helmet from "helmet";
 import passport from "passport";
 import envConfig from "../configs/env.config";
+import PassportService from "./passport.middleware";
 
 const topLevelMiddleware = (app: Application) => {
   app.use(
     cors({
-      origin: "",
+      origin: "*",
       methods: "GET,POST,PUT,DELETE,PATCH",
       credentials: true,
     })
@@ -35,6 +36,13 @@ const topLevelMiddleware = (app: Application) => {
 
   //authenticate using session
   app.use(passport.authenticate("session"));
+
+  //load passport strategies
+
+  new PassportService().passportGithubLoginStrategy();
+  new PassportService().passportGithubRegisterStrategy();
+  new PassportService().passportGoogleLoginStrategy();
+  new PassportService().passportGoogleRegisterStrategy();
 
   //passport middleware to serialize and deserialize
   passport.serializeUser((user, done) => {

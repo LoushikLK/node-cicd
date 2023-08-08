@@ -7,6 +7,7 @@ const errorHandler = (
   next: NextFunction
 ) => {
   res.status(err.status || 500);
+  console.log({ err });
   const errorMessage = err.errors
     ? Object.entries(err.errors)
         .map((error: any) => error[1].message)

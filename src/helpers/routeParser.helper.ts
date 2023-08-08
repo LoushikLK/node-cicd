@@ -9,9 +9,13 @@ const routerHandler = (app: Application) => {
   return allFolders.map(async (folder) => {
     //if route file present then import it
     if (existsSync(path.join(__dirname, "..", "app", folder, "routes.ts"))) {
-      const router = await import(
-        path.join(__dirname, "..", "app", folder, "routes")
-      );
+      const router = require(path.join(
+        __dirname,
+        "..",
+        "app",
+        folder,
+        "routes"
+      ));
 
       return app.use("/api/v1/" + folder, new router.default().router);
     }

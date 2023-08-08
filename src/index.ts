@@ -3,6 +3,7 @@ import { createServer, Server } from "http";
 import envConfig from "./configs/env.config";
 import connectToDb from "./db/connect";
 import { routerHandler } from "./helpers";
+import bottomLevelMiddleware from "./middlewares/bottom.middleware";
 import topLevelMiddleware from "./middlewares/toplevel.middleware";
 require("dotenv").config();
 
@@ -17,6 +18,7 @@ class App {
     connectToDb(); // connect to database
     topLevelMiddleware(this.app); //setup middleware
     routerHandler(this.app); //setup routes
+    bottomLevelMiddleware(this.app); //setup bottom middleware handles (e.g. error ,not found route)
     this.listen(); //start a server by listening to a port
   }
 

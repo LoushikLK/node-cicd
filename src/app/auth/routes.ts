@@ -34,11 +34,11 @@ export default class AuthRouter {
       "/google/register",
       passport.authenticate("google-register", { scope: ["profile", "email"] })
     );
-    this.router.post(
+    this.router.get(
       "/google/login",
       passport.authenticate("google-login", { scope: ["profile", "email"] })
     );
-    this.router.post(
+    this.router.get(
       "/google/callback",
       passport.authenticate("google-login", {
         scope: ["profile", "email"],
@@ -48,17 +48,22 @@ export default class AuthRouter {
     );
 
     this.router.get(
-      "/facebook/register",
-      passport.authenticate("facebook-register")
+      "/github/register",
+      passport.authenticate("github-register", {
+        scope: ["user", "user:email", "read:user", "repo", "repo:status"],
+      })
     );
-    this.router.post(
-      "/facebook/login",
-      passport.authenticate("facebook-login")
+    this.router.get(
+      "/github/login",
+      passport.authenticate("github-login", {
+        scope: ["user", "user:email", "read:user", "repo", "repo:status"],
+      })
     );
 
     this.router.get(
-      "/facebook/callback",
-      passport.authenticate("facebook-login", {
+      "/github/callback",
+      passport.authenticate("github-login", {
+        scope: ["user", "user:email", "read:user", "repo", "repo:status"],
         failureRedirect: envConfig().LoginFailedCallbackURL,
         successRedirect: envConfig().LoginSuccessCallbackURL,
       })

@@ -117,6 +117,7 @@ export default class PassportService {
    */
   public async passportGithubRegisterStrategy() {
     passport.use(
+      "github-register",
       new GitHubStrategy(
         {
           clientID: envConfig().GithubOAuthClientId,
@@ -131,9 +132,6 @@ export default class PassportService {
         ) => {
           try {
             //verify and create user
-
-            console.log({ accessToken });
-            console.log({ profile });
 
             const user = await UserModel.create(
               {
@@ -151,6 +149,55 @@ export default class PassportService {
             );
 
             if (!user) return new InternalServerError("User not registered.");
+            done(null, user);
+          } catch (error) {
+            if (error instanceof Error) {
+              done(error);
+            }
+            done(new Error("Something went wrong"));
+          }
+        }
+      )
+    );
+  }
+
+  /**
+   * passportGoogleLoginStrategy
+   */
+  public async passportGithubLoginStrategy() {
+    passport.use(
+      "github-login",
+      new GoogleStrategy(
+        {
+          clientID: envConfig().GoogleClientId,
+          clientSecret: envConfig().GoogleClientSecret,
+          callbackURL: envConfig().GoogleRegisterCallbackURL,
+        },
+        async (
+          accessToken: string,
+          refreshToken: string,
+          profile: GithubProfile,
+          done: VerifyCallback
+        ) => {
+          try {
+            //verify  user
+
+            const user = await UserModel.findOneAndUpdate(
+              {
+                googleId: profile.id,
+              },
+              {
+                displayName: profile.displayName,
+                googleAccessToken: accessToken,
+                photoUrl: profile.photos?.[0].value,
+              },
+              {
+                runValidators: true,
+                lean: true,
+              }
+            );
+
+            if (!user) return new NotFound("User not found.");
             done(null, user);
           } catch (error) {
             if (error instanceof Error) {
