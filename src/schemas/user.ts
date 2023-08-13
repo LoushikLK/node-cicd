@@ -91,4 +91,4 @@ userSchema.methods.encryptPassword = function (rawPassword: string) {
   }
 };
 
-export const UserModel = model<IUser, Model<IUser>>("user", userSchema);
+export const UserModel = model<IUser, Model<IUser>>("User", userSchema);

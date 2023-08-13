@@ -1,0 +1,15 @@
+import { Document, ObjectId } from "mongoose";
+import { IUser } from "./user";
+
+export interface IGithub extends Document {
+  userId: ObjectId;
+  user: IUser;
+  accessToken: string;
+  refreshToken: string;
+  githubUserName: string;
+  githubProfileUrl: string;
+  githubProfileImage: string;
+  accessPrivate: boolean;
+  accessPublic: boolean;
+  webHookAdded: boolean;
+}
