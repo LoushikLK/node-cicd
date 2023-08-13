@@ -167,11 +167,11 @@ export default class PassportService {
   public async passportGithubLoginStrategy() {
     passport.use(
       "github-login",
-      new GoogleStrategy(
+      new GitHubStrategy(
         {
-          clientID: envConfig().GoogleClientId,
-          clientSecret: envConfig().GoogleClientSecret,
-          callbackURL: envConfig().GoogleRegisterCallbackURL,
+          clientID: envConfig().GithubOAuthClientId,
+          clientSecret: envConfig().GithubOAuthClientSecret,
+          callbackURL: envConfig().GithubRegisterCallbackURL,
         },
         async (
           accessToken: string,

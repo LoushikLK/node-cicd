@@ -39,10 +39,10 @@ const topLevelMiddleware = (app: Application) => {
 
   //load passport strategies
 
-  new PassportService().passportGithubLoginStrategy();
   new PassportService().passportGithubRegisterStrategy();
-  new PassportService().passportGoogleLoginStrategy();
+  new PassportService().passportGithubLoginStrategy();
   new PassportService().passportGoogleRegisterStrategy();
+  new PassportService().passportGoogleLoginStrategy();
 
   //passport middleware to serialize and deserialize
   passport.serializeUser((user, done) => {
@@ -54,6 +54,19 @@ const topLevelMiddleware = (app: Application) => {
   });
 
   app.use(helmet());
+
+  app.use((req, res, next) => {
+    console.table([
+      {
+        METHOD: req.method,
+        PATH: req.path,
+        ip: req.ip,
+        AGENT: req?.get("user-agent")?.split("/")[0],
+      },
+    ]);
+
+    next();
+  });
 };
 
 export default topLevelMiddleware;
