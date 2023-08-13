@@ -6,7 +6,7 @@ const routerHandler = (app: Application) => {
   //find all the folder in the app directory and import all the routes
   const allFolders = readdirSync(path.join(__dirname, "..", "app"));
 
-  return allFolders.map(async (folder) => {
+  allFolders.forEach((folder) => {
     //if route file present then import it
     if (existsSync(path.join(__dirname, "..", "app", folder, "routes.ts"))) {
       const router = require(path.join(
@@ -16,8 +16,7 @@ const routerHandler = (app: Application) => {
         folder,
         "routes"
       ));
-
-      return app.use("/api/v1/" + folder, new router.default().router);
+      app.use("/api/v1/" + folder, new router.default().router);
     }
   });
 };

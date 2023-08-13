@@ -7,25 +7,15 @@ import bottomLevelMiddleware from "./middlewares/bottom.middleware";
 import topLevelMiddleware from "./middlewares/toplevel.middleware";
 require("dotenv").config();
 
-class App {
-  public app: express.Application;
-  private PORT = envConfig().APP_PORT || 8000;
-  private server: Server;
+const app: express.Application = express();
+const PORT = envConfig().APP_PORT || 8000;
+const server: Server = createServer(app);
 
-  constructor() {
-    this.app = express();
-    this.server = createServer(this.app); //create the http server and bind it to express
-    connectToDb(); // connect to database
-    topLevelMiddleware(this.app); //setup middleware
-    routerHandler(this.app); //setup routes
-    bottomLevelMiddleware(this.app); //setup bottom middleware handles (e.g. error ,not found route)
-    this.listen(); //start a server by listening to a port
-  }
+connectToDb(); // connect to database
+topLevelMiddleware(app); //setup middleware
+routerHandler(app); //setup routes
+bottomLevelMiddleware(app); //setup bottom middleware handles (e.g. error ,not found route)
 
-  public listen(): void {
-    this.server.listen(this.PORT, () => {
-      console.log(`Server started on port ${this.PORT}`);
-    });
-  }
-}
-export default new App();
+server.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+});
