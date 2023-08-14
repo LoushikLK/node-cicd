@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Unauthorized } from "http-errors";
 import { verifyToken } from "../helpers/jwt.helper";
+import { AuthorizedUser } from "../types";
 
 declare global {
   namespace Express {

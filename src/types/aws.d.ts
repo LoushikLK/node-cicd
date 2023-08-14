@@ -9,4 +9,5 @@ export interface IAws extends Document {
   publicIp: string;
   privateKey: string;
   awsRegion: string;
+  isDefault: boolean;
 }

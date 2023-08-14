@@ -8,7 +8,10 @@ const routerHandler = (app: Application) => {
 
   allFolders.forEach((folder) => {
     //if route file present then import it
-    if (existsSync(path.join(__dirname, "..", "app", folder, "routes.ts"))) {
+    if (
+      existsSync(path.join(__dirname, "..", "app", folder, "routes.ts")) ||
+      existsSync(path.join(__dirname, "..", "app", folder, "routes.js"))
+    ) {
       const router = require(path.join(
         __dirname,
         "..",

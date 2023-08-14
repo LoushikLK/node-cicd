@@ -24,6 +24,10 @@ const githubSchema = new Schema<IGithub, Model<IGithub>>(
       type: Boolean,
       default: false,
     },
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

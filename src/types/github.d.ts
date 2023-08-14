@@ -12,4 +12,5 @@ export interface IGithub extends Document {
   accessPrivate: boolean;
   accessPublic: boolean;
   webHookAdded: boolean;
+  isDefault: boolean;
 }

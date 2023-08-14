@@ -12,6 +12,10 @@ const awsSchema = new Schema<IAws, Model<IAws>>(
     publicIp: String,
     privateKey: String,
     awsRegion: String,
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
