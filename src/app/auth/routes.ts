@@ -49,7 +49,7 @@ export default class AuthRouter {
 
     this.router.get(
       "/github/register",
-      passport.authenticate("github-register", {
+      passport.authenticate("github-login", {
         scope: ["user", "user:email", "read:user", "repo", "repo:status"],
       })
     );

@@ -19,7 +19,7 @@ export default class PassportService {
    * passportGoogleRegisterStrategy
    */
   public async passportGoogleRegisterStrategy() {
-    passport.use(
+    return passport.use(
       "google-register",
       new GoogleStrategy(
         {
@@ -51,11 +51,11 @@ export default class PassportService {
               }
             );
 
-            if (!user) return new InternalServerError("User not registered.");
+            if (!user) throw new InternalServerError("User not registered.");
             done(null, user);
           } catch (error) {
             if (error instanceof Error) {
-              done(error);
+              return done(error);
             }
             done(new Error("Something went wrong"));
           }
@@ -99,60 +99,11 @@ export default class PassportService {
               }
             );
 
-            if (!user) return new NotFound("User not found.");
+            if (!user) throw new NotFound("User not found.");
             done(null, user);
           } catch (error) {
             if (error instanceof Error) {
-              done(error);
-            }
-            done(new Error("Something went wrong"));
-          }
-        }
-      )
-    );
-  }
-
-  /**
-   * passportGithubRegisterStrategy
-   */
-  public async passportGithubRegisterStrategy() {
-    passport.use(
-      "github-register",
-      new GitHubStrategy(
-        {
-          clientID: envConfig().GithubOAuthClientId,
-          clientSecret: envConfig().GithubOAuthClientSecret,
-          callbackURL: envConfig().GithubRegisterCallbackURL,
-        },
-        async (
-          accessToken: string,
-          refreshToken: string,
-          profile: GithubProfile,
-          done: VerifyCallback
-        ) => {
-          try {
-            //verify and create user
-
-            const user = await UserModel.create(
-              {
-                googleId: profile.id,
-                email: profile?.emails?.[0].value,
-                emailVerified: true,
-                displayName: profile.displayName,
-                googleAccessToken: accessToken,
-                photoUrl: profile.photos?.[0].value,
-              },
-              {
-                runValidators: true,
-                lean: true,
-              }
-            );
-
-            if (!user) return new InternalServerError("User not registered.");
-            done(null, user);
-          } catch (error) {
-            if (error instanceof Error) {
-              done(error);
+              return done(error);
             }
             done(new Error("Something went wrong"));
           }
@@ -165,7 +116,7 @@ export default class PassportService {
    * passportGoogleLoginStrategy
    */
   public async passportGithubLoginStrategy() {
-    passport.use(
+    return passport.use(
       "github-login",
       new GitHubStrategy(
         {
@@ -194,14 +145,15 @@ export default class PassportService {
               {
                 runValidators: true,
                 lean: true,
+                upsert: true,
               }
             );
 
-            if (!user) return new NotFound("User not found.");
+            if (!user) throw new NotFound("User not found.");
             done(null, user);
           } catch (error) {
             if (error instanceof Error) {
-              done(error);
+              return done(error);
             }
             done(new Error("Something went wrong"));
           }
