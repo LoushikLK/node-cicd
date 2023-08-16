@@ -146,6 +146,7 @@ export default class PassportService {
                 runValidators: true,
                 lean: true,
                 upsert: true,
+                new: true,
               }
             );
 
