@@ -8,6 +8,7 @@ export default class AwsServices {
     awsRegion,
     isDefault,
     publicIp,
+    userId,
   }: {
     instanceId?: string;
     username: string;
@@ -15,6 +16,7 @@ export default class AwsServices {
     awsRegion?: string;
     isDefault?: boolean;
     publicIp: string;
+    userId: string;
   }) {
     const awsAccount = await AwsModel.create({
       instanceId,
@@ -23,6 +25,7 @@ export default class AwsServices {
       awsRegion,
       isDefault,
       publicIp,
+      userId,
     });
 
     if (!awsAccount) throw new BadRequest("AWS account create failed");

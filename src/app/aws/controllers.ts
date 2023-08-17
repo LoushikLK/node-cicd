@@ -29,6 +29,7 @@ export default class AwsController {
         awsRegion,
         isDefault,
         publicIp,
+        userId: req?.currentUser?._id,
       });
 
       //send response to client

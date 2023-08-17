@@ -6,7 +6,7 @@ import { AuthorizedUser } from "../types";
 declare global {
   namespace Express {
     interface Request {
-      currentUser: Partial<AuthorizedUser>;
+      currentUser: AuthorizedUser;
     }
   }
 }
