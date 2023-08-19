@@ -1,8 +1,8 @@
 import { Router } from "express";
 import passport from "passport";
-
 import envConfig from "../../configs/env.config";
 import Controllers from "./controllers";
+
 import {
   validateChangePassword,
   validateEmailLogin,
@@ -27,9 +27,13 @@ export default class AuthRouter {
     this.router.post(
       "/email-register",
       validateEmailRegistration(),
-      this.controller.register
+      this.controller.register.bind(this.controller)
     );
-    this.router.post("/login", validateEmailLogin(), this.controller.userLogin);
+    this.router.post(
+      "/login",
+      validateEmailLogin(),
+      this.controller.userLogin.bind(this.controller)
+    );
     this.router.get(
       "/google/register",
       passport.authenticate("google-register", { scope: ["profile", "email"] })
@@ -73,28 +77,28 @@ export default class AuthRouter {
     this.router.post(
       "/change-password",
       validateChangePassword(),
-      this.controller.changePassword
+      this.controller.changePassword.bind(this.controller)
     );
     this.router.post(
       "/resend-verification-code",
       validateResendVerificationCode(),
-      this.controller.resendVerificationCode
+      this.controller.resendVerificationCode.bind(this.controller)
     );
     this.router.post(
       "/verify",
       validateEmailVerify(),
-      this.controller.verifyUser
+      this.controller.verifyUser.bind(this.controller)
     );
     this.router.post(
       "/forgot-password",
       validateForgotPassword(),
-      this.controller.forgotPassword
+      this.controller.forgotPassword.bind(this.controller)
     );
     this.router.post(
       "/forgot-password-verify",
       validateForgotPasswordOTPVerify(),
-      this.controller.forgotPasswordVerify
+      this.controller.forgotPasswordVerify.bind(this.controller)
     );
-    this.router.post("/logout", this.controller.logout);
+    this.router.post("/logout", this.controller.logout.bind(this.controller));
   }
 }

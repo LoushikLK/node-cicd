@@ -6,6 +6,7 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log({ err });
   res.status(err.status || 500);
   const errorMessage = err.errors
     ? Object.entries(err.errors)

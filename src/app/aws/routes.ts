@@ -19,7 +19,7 @@ export default class AwsRouter extends AuthService {
       "/",
       createAwsAccount(),
       this.isAuthenticated,
-      this.controllers.createUser
+      this.controllers.createUser.bind(this.controllers)
     );
   }
 }

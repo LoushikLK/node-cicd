@@ -19,5 +19,5 @@ export const verifyToken = async (token: string): Promise<any> => {
 
   if (!jwtSecret) throw new InternalServerError("JWT secret is not found.");
 
-  return jwt.verify(token, jwtSecret);
+  return jwt.verify(token?.split(" ")[1], jwtSecret);
 };
