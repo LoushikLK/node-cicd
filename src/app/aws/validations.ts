@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ValidationChain, body, param } from "express-validator";
+import { ValidationChain, body, param, query } from "express-validator";
 import { formValidatorHelper } from "../../helpers/formValidation.helper";
 
 export const createAwsAccount = () => {
@@ -89,10 +89,24 @@ export const getAwsAccount = () => {
 export const getAllAwsAccount = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const validations: ValidationChain[] = [
-      param("awsId")
-        .notEmpty()
-        .isMongoId()
-        .withMessage("awsId is not a valid id"),
+      query("perPage")
+        .optional()
+        .isNumeric()
+        .withMessage("perPage must be a number type")
+        .toInt(),
+      query("pageNo")
+        .optional()
+        .isNumeric()
+        .withMessage("pageNo must be a number type")
+        .toInt(),
+      query("searchTitle")
+        .optional()
+        .isString()
+        .withMessage("searchTitle must be a text"),
+      query("awsRegion")
+        .optional()
+        .isString()
+        .withMessage("awsRegion must be a text"),
     ];
 
     await formValidatorHelper(validations, req, res, next);
