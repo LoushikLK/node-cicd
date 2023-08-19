@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ValidationChain, body } from "express-validator";
+import { ValidationChain, body, param } from "express-validator";
 import { formValidatorHelper } from "../../helpers/formValidation.helper";
 
 export const createAwsAccount = () => {
@@ -33,6 +33,66 @@ export const createAwsAccount = () => {
         .optional()
         .isBoolean()
         .withMessage("enter a valid country code."),
+    ];
+
+    await formValidatorHelper(validations, req, res, next);
+  };
+};
+export const updateAWsAccount = () => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const validations: ValidationChain[] = [
+      param("awsId")
+        .notEmpty()
+        .isMongoId()
+        .withMessage("awsId is not a valid id"),
+      body("instanceId")
+        .optional()
+        .isString()
+        .withMessage("instanceId must be a string"),
+      body("username")
+        .optional()
+        .isString()
+        .withMessage("provide a valid username."),
+      body("privateKey")
+        .optional()
+        .isString()
+        .withMessage("provide a valid privateKey."),
+      body("publicIp")
+        .optional()
+        .isIP()
+        .withMessage("provide a valid publicIp."),
+      body("awsRegion")
+        .optional()
+        .isString()
+        .withMessage("provide a valid awsRegion."),
+      body("isDefault")
+        .optional()
+        .isBoolean()
+        .withMessage("enter a valid country code."),
+    ];
+
+    await formValidatorHelper(validations, req, res, next);
+  };
+};
+export const getAwsAccount = () => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const validations: ValidationChain[] = [
+      param("awsId")
+        .notEmpty()
+        .isMongoId()
+        .withMessage("awsId is not a valid id"),
+    ];
+
+    await formValidatorHelper(validations, req, res, next);
+  };
+};
+export const getAllAwsAccount = () => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const validations: ValidationChain[] = [
+      param("awsId")
+        .notEmpty()
+        .isMongoId()
+        .withMessage("awsId is not a valid id"),
     ];
 
     await formValidatorHelper(validations, req, res, next);
