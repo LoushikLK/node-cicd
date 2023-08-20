@@ -16,4 +16,5 @@ export interface IGithub extends Document {
   owner: string;
   appInstalled: boolean;
   metadata: any[];
+  installationId: string;
 }

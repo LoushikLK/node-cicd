@@ -20,6 +20,11 @@ export default function envConfig() {
     GithubOAuthClientId: process.env.GITHUB_OAUTH_CLIENT_ID || "",
     GithubRegisterCallbackURL: process.env.GITHUB_REGISTER_CALLBACK_URL || "",
 
+    //github app
+    GithubAppId: process.env.GITHUB_APP_ID || "",
+    GithubAppSecret: process.env.GITHUB_APP_SECRET || "",
+    GithubAppClientId: process.env.GITHUB_CLIENT_ID || "",
+
     //APP DETAILS
 
     APP_NAME: process.env.APP_NAME || "",

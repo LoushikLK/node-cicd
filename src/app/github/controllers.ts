@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import octokitInstance from "../../configs/octokit.config";
 import GithubService from "./services";
 
 export default class GithubController {
@@ -31,6 +32,34 @@ export default class GithubController {
       //send response to client
       res.json({
         msg: "Github account fetched",
+        success: true,
+        data: {
+          data: githubAcc,
+        },
+      });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
+  public async getGithubRepo(req: Request, res: Response, next: NextFunction) {
+    try {
+      //get id from param
+      const githubId = req.params?.githubId;
+
+      const octokit = octokitInstance("40895964");
+
+      await octokit.rest.apps.getAuthenticated();
+
+      const githubAcc = await octokit.request("GET /user/repos", {
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+
+      //send response to client
+      res.json({
+        msg: "Github repo fetched",
         success: true,
         data: {
           data: githubAcc,

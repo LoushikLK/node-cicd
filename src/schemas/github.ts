@@ -33,6 +33,7 @@ const githubSchema = new Schema<IGithub, Model<IGithub>>(
       type: Boolean,
       default: false,
     },
+    installationId: String,
     metadata: [
       {
         type: Schema.Types.Mixed,
