@@ -25,6 +25,12 @@ export default class GithubRouter extends AuthService {
       this.isAuthenticated,
       this.controllers.getAccountById.bind(this.controllers)
     );
+    this.router.delete(
+      "/:githubId",
+      getGithubAccount(),
+      this.isAuthenticated,
+      this.controllers.deleteAccountById.bind(this.controllers)
+    );
     this.router.get(
       "/",
       getAllGithubAccount(),

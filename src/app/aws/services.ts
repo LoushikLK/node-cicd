@@ -2,6 +2,7 @@ import { BadRequest } from "http-errors";
 import { FilterQuery } from "mongoose";
 import paginationHelper from "../../helpers/pagination.helper";
 import { AwsModel } from "../../schemas/aws";
+import { ProjectModel } from "../../schemas/project";
 import { IAws } from "../../types/aws";
 export default class AwsServices {
   constructor() {}
@@ -70,7 +71,20 @@ export default class AwsServices {
     return awsAccount._id;
   }
   public async getAwsAccountByIdService(awsId: string) {
-    const awsAccount = await AwsModel.findById(awsId);
+    const awsAccount = await AwsModel.findById(awsId).select("-__v -updatedAt");
+
+    if (!awsAccount) throw new BadRequest("AWS account not found");
+
+    return awsAccount;
+  }
+  public async deleteAwsAccountByIdService(awsId: string) {
+    //delete all project associated with this aws account
+
+    await ProjectModel.deleteMany({
+      awsId: awsId,
+    });
+
+    const awsAccount = await AwsModel.findByIdAndDelete(awsId);
 
     if (!awsAccount) throw new BadRequest("AWS account not found");
 

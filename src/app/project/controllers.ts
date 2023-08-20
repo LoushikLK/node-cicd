@@ -140,6 +140,32 @@ export default class AwsController {
       next(error);
     }
   }
+  public async deleteProjectById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      //get id from param
+      const projectId = req.params?.projectId;
+
+      const projectData = await this.service.deleteProjectByIdService(
+        projectId
+      );
+
+      //send response to client
+      res.json({
+        msg: "Project data fetched",
+        success: true,
+        data: {
+          data: projectData,
+        },
+      });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
   public async getAllProject(req: Request, res: Response, next: NextFunction) {
     try {
       //get query parameters

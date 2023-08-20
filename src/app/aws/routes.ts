@@ -38,6 +38,12 @@ export default class AwsRouter extends AuthService {
       this.isAuthenticated,
       this.controllers.getAccountById.bind(this.controllers)
     );
+    this.router.delete(
+      "/:awsId",
+      getAwsAccount(),
+      this.isAuthenticated,
+      this.controllers.deleteAccountById.bind(this.controllers)
+    );
     this.router.get(
       "/",
       getAllAwsAccount(),

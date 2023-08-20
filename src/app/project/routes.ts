@@ -38,6 +38,12 @@ export default class ProjectRouter extends AuthService {
       this.isAuthenticated,
       this.controllers.getProjectById.bind(this.controllers)
     );
+    this.router.delete(
+      "/:projectId",
+      getProject(),
+      this.isAuthenticated,
+      this.controllers.deleteProjectById.bind(this.controllers)
+    );
     this.router.get(
       "/",
       getAllAwsAccount(),

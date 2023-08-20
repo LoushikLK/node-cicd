@@ -104,6 +104,30 @@ export default class AwsController {
       next(error);
     }
   }
+  public async deleteAccountById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      //get id from param
+      const awsId = req.params?.awsId;
+
+      const awsAccount = await this.service.deleteAwsAccountByIdService(awsId);
+
+      //send response to client
+      res.json({
+        msg: "AWS account deleted",
+        success: true,
+        data: {
+          data: awsAccount,
+        },
+      });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
   public async getAllAccount(req: Request, res: Response, next: NextFunction) {
     try {
       //get query parameters

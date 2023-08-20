@@ -127,7 +127,26 @@ export default class AwsServices {
     return project._id;
   }
   public async getProjectByIdService(awsId: string) {
-    const projectData = await ProjectModel.findById(awsId).select(
+    const projectData = await ProjectModel.findById(awsId)
+      .select("-__v -updatedAt")
+      .populate([
+        {
+          path: "githubId",
+          select:
+            "isDefault owner appInstalled githubProfileImage githubProfileUrl accessPrivate accessPublic",
+        },
+        {
+          path: "awsId",
+          select: "instanceId username publicIp awsRegion isDefault",
+        },
+      ]);
+
+    if (!projectData) throw new BadRequest("Project not found");
+
+    return projectData;
+  }
+  public async deleteProjectByIdService(awsId: string) {
+    const projectData = await ProjectModel.findByIdAndDelete(awsId).select(
       "-__v -updatedAt"
     );
 
@@ -178,6 +197,17 @@ export default class AwsServices {
       perPage,
       pageNo,
       select: "-__v -updatedAt",
+      populate: [
+        {
+          path: "githubId",
+          select:
+            "isDefault owner appInstalled githubProfileImage githubProfileUrl accessPrivate accessPublic",
+        },
+        {
+          path: "awsId",
+          select: "instanceId username publicIp awsRegion isDefault",
+        },
+      ],
     });
 
     if (!projectData) throw new BadRequest("Projects not found");

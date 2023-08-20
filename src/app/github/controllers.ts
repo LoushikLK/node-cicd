@@ -41,6 +41,32 @@ export default class GithubController {
       next(error);
     }
   }
+  public async deleteAccountById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      //get id from param
+      const githubId = req.params?.githubId;
+
+      const githubAcc = await this.service.deleteGithubAccountByIdService(
+        githubId
+      );
+
+      //send response to client
+      res.json({
+        msg: "Github account deleted",
+        success: true,
+        data: {
+          data: githubAcc,
+        },
+      });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
   public async getAllAccount(req: Request, res: Response, next: NextFunction) {
     try {
       //get query parameters
