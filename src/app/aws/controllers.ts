@@ -121,9 +121,7 @@ export default class AwsController {
       res.json({
         msg: "AWS account fetched",
         success: true,
-        data: {
-          data: awsAccount,
-        },
+        data: awsAccount,
       });
     } catch (error) {
       //handle error
