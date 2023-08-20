@@ -115,6 +115,7 @@ export default class AwsController {
         searchTitle: searchTitle as string,
         perPage: perPage as string,
         pageNo: pageNo as string,
+        userId: req?.currentUser?._id,
       });
 
       //send response to client

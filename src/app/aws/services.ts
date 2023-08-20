@@ -81,15 +81,17 @@ export default class AwsServices {
     searchTitle,
     pageNo,
     perPage,
+    userId,
   }: {
     awsRegion?: string;
     searchTitle?: string;
     perPage?: string;
     pageNo?: string;
+    userId?: string;
   }) {
     //create dynamic query
 
-    let dynamicQuery: FilterQuery<IAws> = {};
+    let dynamicQuery: FilterQuery<IAws> = { userId: userId };
 
     if (searchTitle)
       dynamicQuery.$or = [

@@ -17,14 +17,16 @@ export default class GithubService {
     searchTitle,
     pageNo,
     perPage,
+    userId,
   }: {
     searchTitle?: string;
     perPage?: string;
     pageNo?: string;
+    userId?: string;
   }) {
     //create dynamic query
 
-    let dynamicQuery: FilterQuery<IGithub> = {};
+    let dynamicQuery: FilterQuery<IGithub> = { userId: userId };
 
     if (searchTitle)
       dynamicQuery.$or = [
