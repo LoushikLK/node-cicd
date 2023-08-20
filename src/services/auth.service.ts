@@ -13,7 +13,7 @@ declare global {
 
 export default class AuthService {
   /**
-   * isAuthenticated
+   * isAuthenticated middleware
    */
   public async isAuthenticated(
     req: Request,
