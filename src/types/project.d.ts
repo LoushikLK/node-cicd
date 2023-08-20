@@ -4,6 +4,7 @@ export enum BuildStatus {
   PENDING,
   SUCCESS,
   FAILED,
+  CANCELLED,
 }
 
 export interface IProject extends Document {
@@ -20,4 +21,9 @@ export interface IProject extends Document {
   startCommand: string;
   autoDeploy: boolean;
   notifyOnFailed: boolean;
+  latestCommit: string;
+  deployCommit: string;
+  isPrivate: boolean;
+  availableBranch: string[];
+  metadata: any[];
 }

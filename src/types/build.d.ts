@@ -9,4 +9,6 @@ export interface IBuild extends Document {
   startTime: Date;
   endTime: Date;
   buildOutPut: string[];
+  buildStartedBy: string;
+  metadata: any;
 }

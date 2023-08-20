@@ -13,4 +13,7 @@ export interface IGithub extends Document {
   accessPublic: boolean;
   webHookAdded: boolean;
   isDefault: boolean;
+  owner: string;
+  appInstalled: boolean;
+  metadata: any[];
 }

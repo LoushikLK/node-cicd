@@ -28,6 +28,16 @@ const githubSchema = new Schema<IGithub, Model<IGithub>>(
       type: Boolean,
       default: false,
     },
+    owner: String,
+    appInstalled: {
+      type: Boolean,
+      default: false,
+    },
+    metadata: [
+      {
+        type: Schema.Types.Mixed,
+      },
+    ],
   },
   {
     timestamps: true,

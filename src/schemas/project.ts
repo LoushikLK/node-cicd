@@ -31,6 +31,22 @@ const projectSchema = new Schema<IProject, Model<IProject>>(
       type: Boolean,
       default: true,
     },
+    latestCommit: String,
+    deployCommit: String,
+    isPrivate: {
+      type: Boolean,
+      default: false,
+    },
+    availableBranch: [
+      {
+        type: String,
+      },
+    ],
+    metadata: [
+      {
+        type: Schema.Types.Mixed,
+      },
+    ],
   },
   {
     timestamps: true,
