@@ -47,15 +47,14 @@ export default class GithubController {
       //get id from param
       const githubId = req.params?.githubId;
 
-      const octokit = octokitInstance("40895964");
+      const octokit = await octokitInstance("40895964");
 
-      await octokit.rest.apps.getAuthenticated();
-
-      const githubAcc = await octokit.request("GET /user/repos", {
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
+      const githubAcc = await octokit.request(
+        "GET /user/installations/{installation_id}/repositories",
+        {
+          installation_id: 40895964,
+        }
+      );
 
       //send response to client
       res.json({

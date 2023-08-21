@@ -5,7 +5,7 @@ import path from "path";
 import envConfig from "./env.config";
 const fetch = require("node-fetch");
 
-const octokitInstance = (installationId: string) => {
+const octokitInstance = async (installationId: string) => {
   const PRIVATE_KEY = readFileSync(
     path.resolve(__dirname, "../../github-private-key.pem"),
     "utf8"
@@ -18,7 +18,7 @@ const octokitInstance = (installationId: string) => {
     auth: {
       appId: envConfig().GithubAppId,
       privateKey: PRIVATE_KEY,
-      installationId: parseInt(installationId),
+      // installationId: parseInt(installationId),
     },
   });
 
