@@ -1,1 +1,3 @@
-export default class HookService {}
+export default class HookService {
+  constructor() {}
+}
