@@ -24,6 +24,8 @@ export default function envConfig() {
     GithubAppId: process.env.GITHUB_APP_ID || "",
     GithubAppSecret: process.env.GITHUB_APP_SECRET || "",
     GithubAppClientId: process.env.GITHUB_CLIENT_ID || "",
+    GithubInstallationRedirectUrl:
+      process.env.GITHUB_APP_INSTALL_REDIRECT_URL || "",
 
     //APP DETAILS
 

@@ -14,6 +14,19 @@ export const getGithubAccount = () => {
     await formValidatorHelper(validations, req, res, next);
   };
 };
+export const getGithubBranch = () => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const validations: ValidationChain[] = [
+      param("githubId")
+        .notEmpty()
+        .isMongoId()
+        .withMessage("githubId is not a valid id"),
+      param("repo").notEmpty().isString().withMessage("repo is not a string"),
+    ];
+
+    await formValidatorHelper(validations, req, res, next);
+  };
+};
 export const getAllGithubAccount = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const validations: ValidationChain[] = [

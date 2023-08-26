@@ -3,6 +3,7 @@ import { createOTP } from "../../helpers/core.helper";
 import { generateToken, verifyToken } from "../../helpers/jwt.helper";
 import { UserModel } from "../../schemas/user";
 import { IUser } from "../../types/user";
+const fetch = require("node-fetch");
 
 export default class Service {
   /**

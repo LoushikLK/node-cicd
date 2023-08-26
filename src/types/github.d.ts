@@ -11,10 +11,11 @@ export interface IGithub extends Document {
   githubProfileImage: string;
   accessPrivate: boolean;
   accessPublic: boolean;
-  webHookAdded: boolean;
   isDefault: boolean;
   owner: string;
   appInstalled: boolean;
   metadata: any[];
   installationId: string;
+  accessTokenExpireAt: Date;
+  refreshTokenExpireAt: Date;
 }

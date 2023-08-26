@@ -12,6 +12,7 @@ import {
 } from "passport-google-oauth20";
 
 import envConfig from "../configs/env.config";
+import useFetch from "../helpers/fetcher.helper";
 import { UserModel } from "../schemas/user";
 
 export default class PassportService {
@@ -133,13 +134,28 @@ export default class PassportService {
           try {
             //verify  user
 
+            const userEmails: {
+              email: string;
+              primary: boolean;
+              verified: boolean;
+            }[] = await useFetch(`https://api.github.com/user/emails`, {
+              method: "GET",
+              headers: {
+                Accept: "application/vnd.github+json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+
             const user = await UserModel.findOneAndUpdate(
               {
-                googleId: profile.id,
+                email: userEmails?.find((item) => item?.primary === true)
+                  ?.email,
               },
               {
+                githubId: profile.id,
                 displayName: profile.displayName,
-                googleAccessToken: accessToken,
+                githubAccessToken: accessToken,
+                githubSecretToken: refreshToken,
                 photoUrl: profile.photos?.[0].value,
               },
               {

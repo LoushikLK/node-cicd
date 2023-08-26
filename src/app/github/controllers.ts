@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import octokitInstance from "../../configs/octokit.config";
+import envConfig from "../../configs/env.config";
 import GithubService from "./services";
 
 export default class GithubController {
@@ -47,13 +47,15 @@ export default class GithubController {
       //get id from param
       const githubId = req.params?.githubId;
 
-      const octokit = await octokitInstance("40895964");
+      //get pagination data from query
 
-      const githubAcc = await octokit.request(
-        "GET /user/installations/{installation_id}/repositories",
-        {
-          installation_id: 40895964,
-        }
+      const { perPage = 1000, pageNo = 1 } = req.query;
+
+      const repository = await this.service.getUsersRepository(
+        githubId,
+        req?.currentUser?._id,
+        perPage as string,
+        pageNo as string
       );
 
       //send response to client
@@ -61,7 +63,39 @@ export default class GithubController {
         msg: "Github repo fetched",
         success: true,
         data: {
-          data: githubAcc,
+          data: repository,
+          perPage,
+          pageNo,
+        },
+      });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
+  public async getGithubRepoBranch(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      //get id from param
+      const githubId = req.params?.githubId;
+
+      const repo = req.params?.repo;
+
+      const branches = await this.service.getRepositoriesBranches(
+        githubId,
+        req?.currentUser?._id,
+        repo
+      );
+
+      //send response to client
+      res.json({
+        msg: "Github branch fetched",
+        success: true,
+        data: {
+          data: branches,
         },
       });
     } catch (error) {
@@ -116,6 +150,21 @@ export default class GithubController {
           data: githubAccount,
         },
       });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
+  public async generateInstalledToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      await this.service.generateGithubToken(req?.query?.code as string);
+
+      //redirect client to reload page
+      res.status(203).redirect(envConfig().GithubInstallationRedirectUrl);
     } catch (error) {
       //handle error
       next(error);

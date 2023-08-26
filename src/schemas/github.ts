@@ -20,10 +20,6 @@ const githubSchema = new Schema<IGithub, Model<IGithub>>(
     githubProfileImage: String,
     githubProfileUrl: String,
     githubUserName: String,
-    webHookAdded: {
-      type: Boolean,
-      default: false,
-    },
     isDefault: {
       type: Boolean,
       default: false,
@@ -39,6 +35,12 @@ const githubSchema = new Schema<IGithub, Model<IGithub>>(
         type: Schema.Types.Mixed,
       },
     ],
+    accessTokenExpireAt: {
+      type: Date,
+    },
+    refreshTokenExpireAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

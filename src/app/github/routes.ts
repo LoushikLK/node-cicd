@@ -1,7 +1,11 @@
 import { Router } from "express";
 import AuthService from "../../services/auth.service";
 import GithubController from "./controllers";
-import { getAllGithubAccount, getGithubAccount } from "./validations";
+import {
+  getAllGithubAccount,
+  getGithubAccount,
+  getGithubBranch,
+} from "./validations";
 
 export default class GithubRouter extends AuthService {
   public router: Router;
@@ -20,6 +24,10 @@ export default class GithubRouter extends AuthService {
       this.controllers.installApp.bind(this.controllers)
     );
     this.router.get(
+      "/install/callback",
+      this.controllers.generateInstalledToken.bind(this.controllers)
+    );
+    this.router.get(
       "/:githubId",
       getGithubAccount(),
       this.isAuthenticated,
@@ -28,14 +36,14 @@ export default class GithubRouter extends AuthService {
     this.router.get(
       "/repo/:githubId",
       getGithubAccount(),
-      // this.isAuthenticated,
+      this.isAuthenticated,
       this.controllers.getGithubRepo.bind(this.controllers)
     );
     this.router.get(
       "/branch/:githubId/:repo",
-      getGithubAccount(),
+      getGithubBranch(),
       this.isAuthenticated,
-      this.controllers.getGithubRepo.bind(this.controllers)
+      this.controllers.getGithubRepoBranch.bind(this.controllers)
     );
     this.router.delete(
       "/:githubId",
