@@ -1,6 +1,9 @@
 import { BadRequest, NotAcceptable, NotFound, Unauthorized } from "http-errors";
+import envConfig from "../../configs/env.config";
 import { createOTP } from "../../helpers/core.helper";
+import useFetch from "../../helpers/fetcher.helper";
 import { generateToken, verifyToken } from "../../helpers/jwt.helper";
+import { GithubModel } from "../../schemas/github";
 import { UserModel } from "../../schemas/user";
 import { IUser } from "../../types/user";
 const fetch = require("node-fetch");
@@ -168,5 +171,78 @@ export default class Service {
       role: user?.role,
     });
     return newToken;
+  };
+  public generateGithubToken = async (code: string) => {
+    //generate access token and refresh token
+
+    const tokenResponse: {
+      access_token: string;
+      expires_in: string;
+      refresh_token: string;
+      refresh_token_expires_in: number;
+      token_type: string;
+    } = await useFetch(
+      `https://github.com/login/oauth/access_token?client_id=${
+        envConfig().GithubAppClientId
+      }&client_secret=${envConfig().GithubAppSecret}&code=${code}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+
+    //get installed users emails
+    const userEmails: {
+      email: string;
+      primary: boolean;
+      verified: boolean;
+    }[] = await useFetch(`https://api.github.com/user/emails`, {
+      method: "GET",
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${tokenResponse.access_token}`,
+      },
+    });
+
+    //find users and update his installed account
+
+    const user = await UserModel.findOne({
+      email: userEmails?.find((item) => item?.primary === true)?.email,
+    }).lean();
+
+    //create github account for that user
+
+    await GithubModel.findOneAndUpdate(
+      {
+        userId: user?._id,
+      },
+      {
+        accessToken: tokenResponse?.access_token,
+        refreshToken: tokenResponse?.refresh_token,
+        accessPrivate: true,
+        accessPublic: true,
+        appInstalled: true,
+        isDefault: true,
+        accessTokenExpireAt: new Date(Date.now() + tokenResponse?.expires_in),
+        refreshTokenExpireAt: new Date(
+          Date.now() + tokenResponse?.refresh_token_expires_in
+        ),
+      },
+      {
+        upsert: true,
+      }
+    );
+
+    //generate access token
+
+    const token = await generateToken({
+      _id: user?._id,
+      email: user?.email,
+      role: user?.role,
+    });
+    return token;
   };
 }

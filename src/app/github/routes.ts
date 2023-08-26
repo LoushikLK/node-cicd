@@ -24,10 +24,6 @@ export default class GithubRouter extends AuthService {
       this.controllers.installApp.bind(this.controllers)
     );
     this.router.get(
-      "/install/callback",
-      this.controllers.generateInstalledToken.bind(this.controllers)
-    );
-    this.router.get(
       "/:githubId",
       getGithubAccount(),
       this.isAuthenticated,

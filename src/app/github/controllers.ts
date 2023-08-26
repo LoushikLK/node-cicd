@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import envConfig from "../../configs/env.config";
 import GithubService from "./services";
 
 export default class GithubController {
@@ -150,21 +149,6 @@ export default class GithubController {
           data: githubAccount,
         },
       });
-    } catch (error) {
-      //handle error
-      next(error);
-    }
-  }
-  public async generateInstalledToken(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      await this.service.generateGithubToken(req?.query?.code as string);
-
-      //redirect client to reload page
-      res.status(203).redirect(envConfig().GithubInstallationRedirectUrl);
     } catch (error) {
       //handle error
       next(error);

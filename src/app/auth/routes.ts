@@ -52,16 +52,8 @@ export default class AuthRouter {
     );
 
     this.router.get(
-      "/github/register",
-      passport.authenticate("github-login", {
-        scope: ["user", "user:email", "read:user", "repo", "repo:status"],
-      })
-    );
-    this.router.get(
       "/github/login",
-      passport.authenticate("github-login", {
-        scope: ["user", "user:email", "read:user", "repo", "repo:status"],
-      })
+      this.controller.redirectToGithub.bind(this.controller)
     );
 
     this.router.get(
@@ -73,7 +65,10 @@ export default class AuthRouter {
       })
     );
 
-    this.router.get("/generate-token", this.controller.createUserToken);
+    this.router.get(
+      "/generate-token",
+      this.controller.createUserToken.bind(this.controller)
+    );
     this.router.post(
       "/change-password",
       validateChangePassword(),

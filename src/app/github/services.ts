@@ -1,12 +1,10 @@
 import { BadRequest, NotFound, Unauthorized } from "http-errors";
 import { FilterQuery } from "mongoose";
-import envConfig from "../../configs/env.config";
 import useFetch from "../../helpers/fetcher.helper";
 import { generateAccessTokenFromRefreshToken } from "../../helpers/github.helper";
 import paginationHelper from "../../helpers/pagination.helper";
 import { GithubModel } from "../../schemas/github";
 import { ProjectModel } from "../../schemas/project";
-import { UserModel } from "../../schemas/user";
 import { IGithub } from "../../types/github";
 export default class GithubService {
   public async getGithubAccountByIdService(githubId: string) {
@@ -68,75 +66,6 @@ export default class GithubService {
 
     return githubAcc;
   }
-
-  public generateGithubToken = async (code: string) => {
-    //generate access token and refresh token
-
-    const tokenResponse: {
-      access_token: string;
-      expires_in: string;
-      refresh_token: string;
-      refresh_token_expires_in: number;
-      token_type: string;
-    } = await useFetch(
-      `https://github.com/login/oauth/access_token?client_id=${
-        envConfig().GithubAppClientId
-      }&client_secret=${envConfig().GithubAppSecret}&code=${code}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
-
-    //get installed users emails
-    const userEmails: {
-      email: string;
-      primary: boolean;
-      verified: boolean;
-    }[] = await useFetch(`https://api.github.com/user/emails`, {
-      method: "GET",
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${tokenResponse.access_token}`,
-      },
-    });
-
-    //find users and update his installed account
-
-    const user = await UserModel.findOne({
-      email: userEmails?.find((item) => item?.primary === true)?.email,
-    }).lean();
-
-    //create github account for that user
-
-    await GithubModel.findOneAndUpdate(
-      {
-        userId: user?._id,
-      },
-      {
-        accessToken: tokenResponse?.access_token,
-        refreshToken: tokenResponse?.refresh_token,
-        accessPrivate: true,
-        accessPublic: true,
-        appInstalled: true,
-        isDefault: true,
-        accessTokenExpireAt: new Date(Date.now() + tokenResponse?.expires_in),
-        refreshTokenExpireAt: new Date(
-          Date.now() + tokenResponse?.refresh_token_expires_in
-        ),
-      },
-      {
-        upsert: true,
-      }
-    );
-
-    //send true
-
-    return true;
-  };
 
   public async getUsersRepository(
     githubId: string,

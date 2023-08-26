@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Unauthorized } from "http-errors";
+import envConfig from "../../configs/env.config";
 import { generateToken } from "../../helpers/jwt.helper";
 import { UserModel } from "../../schemas/user";
 import { sendEmail } from "../../services/mail.service";
@@ -293,6 +294,47 @@ export default class Controllers {
         success: true,
         token: userToken,
       });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
+  public async redirectToGithub(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      //redirect to github for login
+      res
+        .status(300)
+        .redirect(
+          `https://github.com/login/oauth/authorize?client_id=${
+            envConfig().GithubAppClientId
+          }`
+        );
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
+  public async generateInstalledToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const token = await this.service.generateGithubToken(
+        req?.query?.code as string
+      );
+
+      //redirect client to reload page
+      res
+        .status(203)
+        .redirect(
+          envConfig().GithubInstallationRedirectUrl +
+            `?token=${token}&reload=true`
+        );
     } catch (error) {
       //handle error
       next(error);
