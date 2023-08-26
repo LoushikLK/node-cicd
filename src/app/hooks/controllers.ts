@@ -16,7 +16,10 @@ export default class HookController {
   public async handleHooks(req: Request, res: Response, next: NextFunction) {
     try {
       await BuildModel.create({
-        metadata: req,
+        metadata: {
+          headers: req.headers,
+          body: req.body,
+        },
       });
 
       //send response to client
