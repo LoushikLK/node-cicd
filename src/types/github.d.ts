@@ -18,4 +18,5 @@ export interface IGithub extends Document {
   installationId: string;
   accessTokenExpireAt: Date;
   refreshTokenExpireAt: Date;
+  githubId: string;
 }

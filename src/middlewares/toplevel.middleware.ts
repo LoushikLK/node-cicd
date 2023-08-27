@@ -39,7 +39,6 @@ const topLevelMiddleware = (app: Application) => {
 
   //load passport strategies
 
-  new PassportService().passportGithubLoginStrategy();
   new PassportService().passportGoogleRegisterStrategy();
   new PassportService().passportGoogleLoginStrategy();
 

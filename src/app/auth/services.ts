@@ -206,25 +206,44 @@ export default class Service {
         Authorization: `Bearer ${tokenResponse.access_token}`,
       },
     });
+    //get installed users data
+    const userData = await useFetch(`https://api.github.com/user`, {
+      method: "GET",
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${tokenResponse.access_token}`,
+      },
+    });
 
-    //find users and update his installed account
-
-    const user = await UserModel.findOne({
-      email: userEmails?.find((item) => item?.primary === true)?.email,
-    }).lean();
+    //find or create user details
+    const user = await UserModel.findOneAndUpdate(
+      {
+        email: userEmails?.find((item) => item?.primary === true)?.email,
+      },
+      {
+        githubAccessToken: tokenResponse?.access_token,
+        githubSecretToken: tokenResponse?.refresh_token,
+        displayName: userData?.name,
+        photoUrl: userData?.avatar_url,
+        githubId: userData?.id,
+      },
+      {
+        upsert: true,
+        new: true,
+      }
+    );
 
     //create github account for that user
 
     await GithubModel.findOneAndUpdate(
       {
-        userId: user?._id,
+        $or: [{ userId: user?._id }, { githubId: userData?.id }],
       },
       {
         accessToken: tokenResponse?.access_token,
         refreshToken: tokenResponse?.refresh_token,
         accessPrivate: true,
         accessPublic: true,
-        appInstalled: true,
         isDefault: true,
         accessTokenExpireAt: new Date(Date.now() + tokenResponse?.expires_in),
         refreshTokenExpireAt: new Date(

@@ -25,6 +25,7 @@ const githubSchema = new Schema<IGithub, Model<IGithub>>(
       default: false,
     },
     owner: String,
+    githubId: String,
     appInstalled: {
       type: Boolean,
       default: false,

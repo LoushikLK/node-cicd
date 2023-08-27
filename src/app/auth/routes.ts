@@ -58,11 +58,7 @@ export default class AuthRouter {
 
     this.router.get(
       "/github/callback",
-      passport.authenticate("github-login", {
-        scope: ["user", "user:email", "read:user", "repo", "repo:status"],
-        failureRedirect: envConfig().LoginFailedCallbackURL,
-        successRedirect: envConfig().LoginSuccessCallbackURL,
-      })
+      this.controller.generateInstalledToken.bind(this.controller)
     );
 
     this.router.get(

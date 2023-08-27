@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { BuildModel } from "../../schemas/build";
 import HookService from "./services";
 
 export default class HookController {
@@ -15,12 +14,23 @@ export default class HookController {
 
   public async handleHooks(req: Request, res: Response, next: NextFunction) {
     try {
-      await BuildModel.create({
-        metadata: {
-          headers: req.headers,
-          body: req.body,
-        },
-      });
+      //handle hooks for different event
+
+      switch (req?.headers["x-github-event"]) {
+        case "push":
+          await this.service.handlePushEvent(req.body);
+          break;
+        case "installation":
+          if (req.body?.action === "action") {
+            await this.service.handleInstallationCreateEvent(req.body);
+          } else {
+            await this.service.handleInstallationDeleteEvent(req.body);
+          }
+          break;
+
+        default:
+          break;
+      }
 
       //send response to client
       res.json({
