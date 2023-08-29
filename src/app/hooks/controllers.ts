@@ -21,9 +21,9 @@ export default class HookController {
           await this.service.handlePushEvent(req.body);
           break;
         case "installation":
-          if (req.body?.action === "action") {
+          if (req.body?.action === "create") {
             await this.service.handleInstallationCreateEvent(req.body);
-          } else {
+          } else if (req.body?.action === "delete") {
             await this.service.handleInstallationDeleteEvent(req.body);
           }
           break;

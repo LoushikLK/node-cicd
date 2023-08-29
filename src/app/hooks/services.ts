@@ -1,6 +1,8 @@
 import { GithubModel } from "../../schemas/github";
+import { ProjectModel } from "../../schemas/project";
 import { Installation } from "../../types/installation";
-import { PushEvent } from "../../types/push";
+import { BuildStatus } from "../../types/project";
+import { PushEventPayload } from "../../types/push";
 
 export default class HookService {
   constructor() {}
@@ -38,7 +40,6 @@ export default class HookService {
         {
           appInstalled: false,
         },
-
         {
           upsert: true,
           new: true,
@@ -48,8 +49,56 @@ export default class HookService {
       throw error;
     }
   }
-  public async handlePushEvent(data: PushEvent) {
+  public async handlePushEvent(data: PushEventPayload) {
     try {
+      //find the github account associate with it
+      const githubAccount = await GithubModel.findOne({
+        $and: [
+          {
+            installationId: data?.installation?.id,
+          },
+          {
+            githubId: data?.repository?.id,
+          },
+        ],
+      });
+
+      if (!githubAccount) return;
+
+      if (!githubAccount?.appInstalled) return;
+      if (!githubAccount?.refreshToken) return;
+
+      let branch = data?.ref?.split("/")?.at(-1);
+
+      //find the project
+      const projectData = await ProjectModel.findOne({
+        $and: [
+          { githubId: githubAccount?._id },
+          {
+            deployBranch: branch,
+          },
+          {
+            repositoryUrl: data?.clone_url,
+          },
+        ],
+      });
+
+      if (!projectData) return;
+
+      if (!projectData?.autoDeploy) return;
+
+      projectData.latestCommit = data?.head_commit?.message;
+      projectData.deployCommit = data?.head_commit?.id;
+
+      projectData.$push = {
+        metadata: data,
+      };
+
+      projectData.lastBuildStatus = BuildStatus.PENDING;
+
+      await projectData.save();
+
+      //start the build event
     } catch (error) {
       throw error;
     }
