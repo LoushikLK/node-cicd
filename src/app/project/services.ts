@@ -2,7 +2,7 @@ import { BadRequest } from "http-errors";
 import { FilterQuery } from "mongoose";
 import paginationHelper from "../../helpers/pagination.helper";
 import { ProjectModel } from "../../schemas/project";
-import { IProject } from "../../types/project";
+import IProject from "../../types/project";
 export default class AwsServices {
   constructor() {}
   public async createNewProject({

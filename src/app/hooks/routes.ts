@@ -2,7 +2,7 @@ import { Router } from "express";
 import AuthService from "../../services/auth.service";
 import HookControllers from "./controllers";
 
-export default class AwsRouter extends AuthService {
+export default class HookRouter extends AuthService {
   public router: Router;
   private controllers: HookControllers;
 
@@ -14,6 +14,6 @@ export default class AwsRouter extends AuthService {
   }
 
   private routes() {
-    this.router.post("/", this.controllers.handleHooks.bind(this.controllers));
+    this.router.post("/", this.controllers.handleHooks);
   }
 }

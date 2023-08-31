@@ -3,7 +3,7 @@ import AuthService from "../../services/auth.service";
 import ProjectController from "./controllers";
 import {
   createProject,
-  getAllAwsAccount,
+  getAllProjectAccount,
   getProject,
   updateProject,
 } from "./validations";
@@ -46,7 +46,7 @@ export default class ProjectRouter extends AuthService {
     );
     this.router.get(
       "/",
-      getAllAwsAccount(),
+      getAllProjectAccount(),
       this.isAuthenticated,
       this.controllers.getAllProject.bind(this.controllers)
     );

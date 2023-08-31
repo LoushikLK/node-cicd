@@ -1,11 +1,10 @@
+import { BuildModel } from "../../schemas/build";
 import { GithubModel } from "../../schemas/github";
 import { ProjectModel } from "../../schemas/project";
 import { Installation } from "../../types/installation";
-import { BuildStatus } from "../../types/project";
 import { PushEventPayload } from "../../types/push";
 
 export default class HookService {
-  constructor() {}
   public async handleInstallationCreateEvent(data: Installation) {
     try {
       //when installation created save the data in users details
@@ -90,13 +89,50 @@ export default class HookService {
       projectData.latestCommit = data?.head_commit?.message;
       projectData.deployCommit = data?.head_commit?.id;
 
-      projectData.$push = {
-        metadata: data,
-      };
+      projectData.lastBuildStatus = "PENDING";
 
-      projectData.lastBuildStatus = BuildStatus.PENDING;
+      projectData.metadata.push(data);
 
       await projectData.save();
+
+      this.handleBuild(data, projectData?._id);
+
+      //start the build event
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async handleBuild(data: PushEventPayload, projectId: string) {
+    try {
+      const buildData = await BuildModel.create({
+        projectId: projectId,
+        buildCommit: data?.commits[0]?.message,
+        reason: "PUSH",
+        status: "PENDING",
+        metadata: data,
+        buildStartedBy: data?.commits[0]?.committer?.username,
+      });
+
+      if (!buildData) return;
+
+      //find the aws credentials
+      const awsCCredentials = await ProjectModel.findById(projectId)
+        .populate([
+          {
+            path: "awsId",
+            select: "username publicIp privateKey",
+          },
+          {
+            path: "githubId",
+            select: "accessToken refreshToken",
+          },
+        ])
+        .select(
+          "awsId githubId repositoryUrl deployBranch buildCommand startCommand rootDirectory"
+        );
+
+      if (!awsCCredentials) return;
+      //connect to aws
 
       //start the build event
     } catch (error) {

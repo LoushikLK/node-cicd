@@ -1,13 +1,6 @@
 import { Document, ObjectId } from "mongoose";
 
-export enum BuildStatus {
-  PENDING,
-  SUCCESS,
-  FAILED,
-  CANCELLED,
-}
-
-export interface IProject extends Document {
+export default interface IProject extends Document {
   userId: ObjectId;
   githubId: ObjectId;
   awsId: ObjectId;
@@ -15,7 +8,7 @@ export interface IProject extends Document {
   deployBranch: string;
   defaultBranch: string;
   projectName: string;
-  lastBuildStatus: BuildStatus;
+  lastBuildStatus: "PENDING" | "SUCCESS" | "CANCELLED" | "FAILED";
   rootDirectory: string;
   buildCommand: string;
   startCommand: string;

@@ -147,7 +147,7 @@ export const getProject = () => {
     await formValidatorHelper(validations, req, res, next);
   };
 };
-export const getAllAwsAccount = () => {
+export const getAllProjectAccount = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const validations: ValidationChain[] = [
       query("perPage")
@@ -164,10 +164,11 @@ export const getAllAwsAccount = () => {
         .optional()
         .isString()
         .withMessage("searchTitle must be a text"),
-      query("awsRegion")
+      query("githubId")
         .optional()
-        .isString()
-        .withMessage("awsRegion must be a text"),
+        .isMongoId()
+        .withMessage("githubId id is invalid"),
+      query("awsId").optional().isMongoId().withMessage("awsId id is invalid"),
     ];
 
     await formValidatorHelper(validations, req, res, next);
