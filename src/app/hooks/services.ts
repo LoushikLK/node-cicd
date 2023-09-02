@@ -1,7 +1,12 @@
+import { generateAccessTokenFromRefreshToken } from "../../helpers/github.helper";
 import { BuildModel } from "../../schemas/build";
 import { GithubModel } from "../../schemas/github";
 import { ProjectModel } from "../../schemas/project";
+import sshClientService from "../../services/ssh.service";
+import { IAws } from "../../types/aws";
+import { IGithub } from "../../types/github";
 import { Installation } from "../../types/installation";
+import IProject from "../../types/project";
 import { PushEventPayload } from "../../types/push";
 
 export default class HookService {
@@ -116,23 +121,51 @@ export default class HookService {
       if (!buildData) return;
 
       //find the aws credentials
-      const awsCCredentials = await ProjectModel.findById(projectId)
-        .populate([
-          {
-            path: "awsId",
-            select: "username publicIp privateKey",
-          },
-          {
-            path: "githubId",
-            select: "accessToken refreshToken",
-          },
-        ])
-        .select(
-          "awsId githubId repositoryUrl deployBranch buildCommand startCommand rootDirectory"
-        );
+      const awsCCredentials: IProject & { awsId: IAws; githubId: IGithub } =
+        await ProjectModel.findById(projectId)
+          .populate([
+            {
+              path: "awsId",
+              select: "username publicIp privateKey",
+            },
+            {
+              path: "githubId",
+              select: "accessToken refreshToken",
+            },
+          ])
+          .select(
+            "awsId githubId repositoryUrl deployBranch buildCommand startCommand rootDirectory"
+          );
 
       if (!awsCCredentials) return;
       //connect to aws
+      const sshClient = new sshClientService({
+        host: awsCCredentials?.awsId?.publicIp as string,
+        privateKey: awsCCredentials?.awsId?.privateKey as string,
+        username: awsCCredentials?.awsId?.username,
+      });
+
+      const accessToken = generateAccessTokenFromRefreshToken(
+        awsCCredentials?.githubId?.refreshToken,
+        awsCCredentials?.githubId?.refreshTokenExpireAt
+      );
+
+      sshClient.sendCommand(`pm2 stop all`);
+
+      //clone the repo
+      sshClient.sendCommand(
+        `git clone https://${accessToken}${awsCCredentials?.repositoryUrl
+          ?.split("https://")
+          ?.at(-1)}`
+      );
+      //clone the repo
+      sshClient.sendCommand(
+        `cd ${
+          awsCCredentials?.repositoryUrl?.split("/")?.at(-1)?.split(".git")[0]
+        }`
+      );
+      sshClient.sendCommand(awsCCredentials?.buildCommand);
+      sshClient.sendCommand(awsCCredentials?.startCommand);
 
       //start the build event
     } catch (error) {
