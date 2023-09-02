@@ -15,6 +15,11 @@ export const createProject = () => {
         .withMessage("repositoryUrl is required.")
         .isURL()
         .withMessage("provide a valid repositoryUrl."),
+      body("repositoryId")
+        .notEmpty()
+        .withMessage("repositoryId is required.")
+        .isString()
+        .withMessage("provide a valid repositoryId."),
       body("deployBranch")
         .notEmpty()
         .withMessage("deployBranch is required.")
@@ -83,9 +88,12 @@ export const updateProject = () => {
       body("awsId").optional().isMongoId().withMessage("awsId is not valid"),
       body("repositoryUrl")
         .optional()
-        .withMessage("repositoryUrl is required.")
         .isURL()
         .withMessage("provide a valid repositoryUrl."),
+      body("repositoryId")
+        .optional()
+        .isString()
+        .withMessage("provide a valid repositoryId."),
       body("deployBranch")
         .optional()
         .isString()

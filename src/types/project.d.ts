@@ -5,6 +5,7 @@ export default interface IProject extends Document {
   githubId: ObjectId;
   awsId: ObjectId;
   repositoryUrl: string;
+  repositoryId: string;
   deployBranch: string;
   defaultBranch: string;
   projectName: string;

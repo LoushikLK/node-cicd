@@ -14,6 +14,6 @@ export default class HookRouter extends AuthService {
   }
 
   private routes() {
-    this.router.post("/", this.controllers.handleHooks);
+    this.router.post("/", this.controllers.handleHooks.bind(this.controllers));
   }
 }

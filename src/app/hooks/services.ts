@@ -55,17 +55,21 @@ export default class HookService {
   }
   public async handlePushEvent(data: PushEventPayload) {
     try {
+      console.log({ data });
+
       //find the github account associate with it
       const githubAccount = await GithubModel.findOne({
         $and: [
           {
-            installationId: data?.installation?.id,
+            installationId: data?.installation?.id?.toString(),
           },
           {
-            githubId: data?.repository?.id,
+            githubId: data?.repository?.owner?.id?.toString(),
           },
         ],
       });
+
+      console.log({ githubAccount });
 
       if (!githubAccount) return;
       if (!githubAccount?.appInstalled) return;
@@ -85,6 +89,8 @@ export default class HookService {
         ],
       });
 
+      console.log({ projectData });
+
       if (!projectData) return;
 
       if (!projectData?.autoDeploy) return;
@@ -98,7 +104,7 @@ export default class HookService {
 
       await projectData.save();
 
-      this.handleBuild(data, projectData?._id);
+      // this.handleBuild(data, projectData?._id);
 
       //start the build event
     } catch (error) {

@@ -45,7 +45,6 @@ export default class GithubController {
     try {
       //get id from param
       const githubId = req.params?.githubId;
-
       //get pagination data from query
 
       const { perPage = 1000, pageNo = 1 } = req.query;

@@ -30,12 +30,14 @@ export default class AwsController {
         isPrivate,
         availableBranch,
         metadata,
+        repositoryId,
       } = req.body;
       //get data from req.body
       const project = await this.service.createNewProject({
         githubId,
         awsId,
         repositoryUrl,
+        repositoryId,
         deployBranch,
         defaultBranch,
         projectName,
@@ -84,6 +86,7 @@ export default class AwsController {
         isPrivate,
         availableBranch,
         metadata,
+        repositoryId,
       } = req.body;
       //get data from req.body
 
@@ -108,6 +111,7 @@ export default class AwsController {
         availableBranch,
         metadata,
         projectId,
+        repositoryId,
       });
 
       //send response to client

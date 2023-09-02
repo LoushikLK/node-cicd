@@ -23,6 +23,7 @@ export default class AwsServices {
     availableBranch,
     metadata,
     userId,
+    repositoryId,
   }: {
     githubId: string;
     awsId: string;
@@ -41,6 +42,7 @@ export default class AwsServices {
     availableBranch: string;
     metadata: any;
     userId: string;
+    repositoryId: string;
   }) {
     const projectCreate = await ProjectModel.create({
       githubId,
@@ -60,6 +62,7 @@ export default class AwsServices {
       availableBranch,
       metadata,
       userId,
+      repositoryId,
     });
 
     if (!projectCreate) throw new BadRequest("Project create failed");
@@ -84,6 +87,7 @@ export default class AwsServices {
     availableBranch,
     metadata,
     projectId,
+    repositoryId,
   }: {
     githubId: string;
     awsId: string;
@@ -102,6 +106,7 @@ export default class AwsServices {
     availableBranch: string;
     metadata: any;
     projectId: string;
+    repositoryId: string;
   }) {
     const project = await ProjectModel.findByIdAndUpdate(projectId, {
       githubId,
@@ -120,6 +125,7 @@ export default class AwsServices {
       isPrivate,
       availableBranch,
       metadata,
+      repositoryId,
     });
 
     if (!project) throw new BadRequest("Project not found");

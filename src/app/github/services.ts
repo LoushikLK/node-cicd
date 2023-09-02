@@ -73,11 +73,6 @@ export default class GithubService {
     perPage?: string,
     pageNo?: string
   ) {
-    //delete all project associated with this aws account
-
-    await ProjectModel.deleteMany({
-      githubId: githubId,
-    });
     const githubAccount = await GithubModel.findOne({
       _id: githubId,
       userId,

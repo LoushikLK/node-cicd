@@ -16,6 +16,7 @@ const projectSchema = new Schema<IProject, Model<IProject>>(
       ref: "Aws",
     },
     repositoryUrl: String,
+    repositoryId: String,
     deployBranch: String,
     defaultBranch: String,
     projectName: String,
