@@ -68,10 +68,8 @@ export default class HookService {
       });
 
       if (!githubAccount) return;
-
       if (!githubAccount?.appInstalled) return;
       if (!githubAccount?.refreshToken) return;
-
       let branch = data?.ref?.split("/")?.at(-1);
 
       //find the project
