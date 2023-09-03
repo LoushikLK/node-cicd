@@ -14,25 +14,25 @@ export default class HookController {
 
   public async handleHooks(req: Request, res: Response, next: NextFunction) {
     try {
-      //handle hooks for different event
+      // handle hooks for different event
 
-      // switch (req?.headers["x-github-event"]) {
-      //   case "push":
-      //     await this.service.handlePushEvent(req.body);
-      //     break;
-      //   case "installation":
-      //     if (req.body?.action === "create") {
-      //       await this.service.handleInstallationCreateEvent(req.body);
-      //     } else if (req.body?.action === "delete") {
-      //       await this.service.handleInstallationDeleteEvent(req.body);
-      //     }
-      //     break;
+      switch (req?.headers["x-github-event"]) {
+        case "push":
+          await this.service.handlePushEvent(req.body);
+          break;
+        case "installation":
+          if (req.body?.action === "create") {
+            await this.service.handleInstallationCreateEvent(req.body);
+          } else if (req.body?.action === "delete") {
+            await this.service.handleInstallationDeleteEvent(req.body);
+          }
+          break;
 
-      //   default:
-      //     break;
-      // }
+        default:
+          break;
+      }
 
-      await this.service.handlePushEvent(req.body);
+      // await this.service.handlePushEvent(req.body);
 
       //send response to client
       res.json({

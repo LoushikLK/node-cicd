@@ -177,7 +177,7 @@ export default class Service {
 
     const tokenResponse: {
       access_token: string;
-      expires_in: string;
+      expires_in: number;
       refresh_token: string;
       refresh_token_expires_in: number;
       token_type: string;
@@ -245,9 +245,11 @@ export default class Service {
         accessPrivate: true,
         accessPublic: true,
         isDefault: true,
-        accessTokenExpireAt: new Date(Date.now() + tokenResponse?.expires_in),
+        accessTokenExpireAt: new Date(
+          Date.now() + tokenResponse?.expires_in * 1000
+        ),
         refreshTokenExpireAt: new Date(
-          Date.now() + tokenResponse?.refresh_token_expires_in
+          Date.now() + tokenResponse?.refresh_token_expires_in * 1000
         ),
       },
       {

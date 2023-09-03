@@ -1,7 +1,7 @@
 import { BadRequest, NotFound, Unauthorized } from "http-errors";
 import { FilterQuery } from "mongoose";
 import useFetch from "../../helpers/fetcher.helper";
-import { generateAccessTokenFromRefreshToken } from "../../helpers/github.helper";
+import { generateAccessToken } from "../../helpers/github.helper";
 import paginationHelper from "../../helpers/pagination.helper";
 import { GithubModel } from "../../schemas/github";
 import { ProjectModel } from "../../schemas/project";
@@ -85,28 +85,9 @@ export default class GithubService {
     if (!githubAccount?.accessTokenExpireAt)
       throw new Unauthorized("No access token provided reinstall github app");
 
-    let accessToken;
+    let accessToken = generateAccessToken(githubId);
 
-    //check if access token expire
-    if (new Date(githubAccount?.accessTokenExpireAt) < new Date()) {
-      let token = await generateAccessTokenFromRefreshToken(
-        githubAccount?.refreshToken,
-        githubAccount?.refreshTokenExpireAt
-      );
-
-      accessToken = token?.access_token;
-      githubAccount.accessToken = token?.access_token;
-      githubAccount.accessTokenExpireAt = new Date(
-        Date.now() + token?.expires_in
-      );
-      githubAccount.refreshToken = token?.refresh_token;
-      githubAccount.refreshTokenExpireAt = new Date(
-        Date.now() + token?.refresh_token_expires_in
-      );
-      await githubAccount.save();
-    } else {
-      accessToken = githubAccount?.accessToken;
-    }
+    if (!accessToken) throw new Error("Access token not found");
 
     const repositories = await useFetch(
       `https://api.github.com/user/repos?per_page=${perPage}&page=${pageNo}`,
@@ -143,28 +124,9 @@ export default class GithubService {
     if (!githubAccount?.accessTokenExpireAt)
       throw new Unauthorized("No access token provided reinstall github app");
 
-    let accessToken;
+    let accessToken = generateAccessToken(githubId);
 
-    //check if access token expire
-    if (new Date(githubAccount?.accessTokenExpireAt) < new Date()) {
-      let token = await generateAccessTokenFromRefreshToken(
-        githubAccount?.refreshToken,
-        githubAccount?.refreshTokenExpireAt
-      );
-
-      accessToken = token?.access_token;
-      githubAccount.accessToken = token?.access_token;
-      githubAccount.accessTokenExpireAt = new Date(
-        Date.now() + token?.expires_in
-      );
-      githubAccount.refreshToken = token?.refresh_token;
-      githubAccount.refreshTokenExpireAt = new Date(
-        Date.now() + token?.refresh_token_expires_in
-      );
-      await githubAccount.save();
-    } else {
-      accessToken = githubAccount?.accessToken;
-    }
+    if (!accessToken) throw new Error("Access token not found");
 
     const branched = await useFetch(
       `https://api.github.com/repos/LoushikLk/${repo}/branches`,

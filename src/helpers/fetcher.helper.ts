@@ -17,6 +17,8 @@ const useFetch = async (url: string, options?: Options) => {
 
   const data = await response.json();
 
+  if (response.statusText !== "OK") throw new Error(data?.error);
+
   return data;
 };
 

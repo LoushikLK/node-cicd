@@ -1,8 +1,8 @@
-import { generateAccessTokenFromRefreshToken } from "../../helpers/github.helper";
+import { generateAccessToken } from "../../helpers/github.helper";
 import { BuildModel } from "../../schemas/build";
 import { GithubModel } from "../../schemas/github";
 import { ProjectModel } from "../../schemas/project";
-import sshClientService from "../../services/ssh.service";
+import sendCommand from "../../services/ssh.service";
 import { IAws } from "../../types/aws";
 import { IGithub } from "../../types/github";
 import { Installation } from "../../types/installation";
@@ -55,8 +55,6 @@ export default class HookService {
   }
   public async handlePushEvent(data: PushEventPayload) {
     try {
-      console.log({ data });
-
       //find the github account associate with it
       const githubAccount = await GithubModel.findOne({
         $and: [
@@ -68,8 +66,6 @@ export default class HookService {
           },
         ],
       });
-
-      console.log({ githubAccount });
 
       if (!githubAccount) return;
       if (!githubAccount?.appInstalled) return;
@@ -84,96 +80,133 @@ export default class HookService {
             deployBranch: branch,
           },
           {
-            repositoryUrl: data?.clone_url,
+            repositoryId: data?.repository?.id?.toString(),
           },
         ],
       });
 
-      console.log({ projectData });
-
       if (!projectData) return;
-
       if (!projectData?.autoDeploy) return;
 
       projectData.latestCommit = data?.head_commit?.message;
       projectData.deployCommit = data?.head_commit?.id;
-
       projectData.lastBuildStatus = "PENDING";
-
       projectData.metadata.push(data);
 
       await projectData.save();
 
-      // this.handleBuild(data, projectData?._id);
-
       //start the build event
+      this.handleBuild(data, projectData?._id);
     } catch (error) {
       throw error;
     }
   }
   public async handleBuild(data: PushEventPayload, projectId: string) {
+    const buildData = await BuildModel.create({
+      projectId: projectId,
+      buildCommit: data?.commits[0]?.message,
+      reason: "PUSH",
+      status: "PENDING",
+      metadata: data,
+      buildStartedBy: data?.commits[0]?.committer?.username,
+    });
+
+    if (!buildData) return;
+
+    //find the aws credentials
+    const awsCCredentials: IProject & { awsId: IAws; githubId: IGithub } =
+      await ProjectModel.findById(projectId)
+        .populate([
+          {
+            path: "awsId",
+            select: "username publicIp privateKey",
+          },
+          {
+            path: "githubId",
+            select: "_id githubId",
+          },
+        ])
+        .select(
+          "awsId githubId repositoryUrl deployBranch buildCommand startCommand rootDirectory"
+        );
+
+    if (!awsCCredentials)
+      throw new Error("Build failed due to aws credentials not found");
+
     try {
-      const buildData = await BuildModel.create({
-        projectId: projectId,
-        buildCommit: data?.commits[0]?.message,
-        reason: "PUSH",
-        status: "PENDING",
-        metadata: data,
-        buildStartedBy: data?.commits[0]?.committer?.username,
-      });
+      const accessToken = await generateAccessToken(
+        awsCCredentials?.githubId?.githubId
+      );
 
-      if (!buildData) return;
+      if (!accessToken?.length)
+        throw new Error("Build failed due to access token not found");
 
-      //find the aws credentials
-      const awsCCredentials: IProject & { awsId: IAws; githubId: IGithub } =
-        await ProjectModel.findById(projectId)
-          .populate([
-            {
-              path: "awsId",
-              select: "username publicIp privateKey",
-            },
-            {
-              path: "githubId",
-              select: "accessToken refreshToken",
-            },
-          ])
-          .select(
-            "awsId githubId repositoryUrl deployBranch buildCommand startCommand rootDirectory"
-          );
+      const repositoryName = awsCCredentials?.repositoryUrl
+        ?.split("/")
+        ?.at(-1)
+        ?.split(".git")[0];
+      const repositoryUrl = awsCCredentials?.repositoryUrl
+        ?.split("https://")
+        ?.at(-1);
 
-      if (!awsCCredentials) return;
-      //connect to aws
-      const sshClient = new sshClientService({
-        host: awsCCredentials?.awsId?.publicIp as string,
-        privateKey: awsCCredentials?.awsId?.privateKey as string,
+      const command = await sendCommand({
+        host: awsCCredentials?.awsId?.publicIp,
+        privateKey: awsCCredentials?.awsId?.privateKey,
         username: awsCCredentials?.awsId?.username,
+        command: `rm -rf ${repositoryName}`,
       });
 
-      const accessToken = generateAccessTokenFromRefreshToken(
-        awsCCredentials?.githubId?.refreshToken,
-        awsCCredentials?.githubId?.refreshTokenExpireAt
-      );
+      buildData.buildOutPut.push(command);
+      await buildData.save();
 
-      sshClient.sendCommand(`pm2 stop all`);
+      const command2 = await sendCommand({
+        host: awsCCredentials?.awsId?.publicIp,
+        privateKey: awsCCredentials?.awsId?.privateKey,
+        username: awsCCredentials?.awsId?.username,
+        command: `git clone https://${accessToken}@${repositoryUrl}`,
+      });
+      buildData.buildOutPut.push(command2);
+      await buildData.save();
+      const command3 = await sendCommand({
+        host: awsCCredentials?.awsId?.publicIp,
+        privateKey: awsCCredentials?.awsId?.privateKey,
+        username: awsCCredentials?.awsId?.username,
+        command: `cd ${repositoryName}`,
+      });
+      buildData.buildOutPut.push(command3);
+      await buildData.save();
+      const command4 = await sendCommand({
+        host: awsCCredentials?.awsId?.publicIp,
+        privateKey: awsCCredentials?.awsId?.privateKey,
+        username: awsCCredentials?.awsId?.username,
+        command: awsCCredentials?.buildCommand,
+      });
+      buildData.buildOutPut.push(command4);
+      await buildData.save();
+      const command5 = await sendCommand({
+        host: awsCCredentials?.awsId?.publicIp,
+        privateKey: awsCCredentials?.awsId?.privateKey,
+        username: awsCCredentials?.awsId?.username,
+        command: awsCCredentials?.startCommand,
+      });
+      buildData.buildOutPut.push(command5);
+      await buildData.save();
 
-      //clone the repo
-      sshClient.sendCommand(
-        `git clone https://${accessToken}${awsCCredentials?.repositoryUrl
-          ?.split("https://")
-          ?.at(-1)}`
-      );
-      //clone the repo
-      sshClient.sendCommand(
-        `cd ${
-          awsCCredentials?.repositoryUrl?.split("/")?.at(-1)?.split(".git")[0]
-        }`
-      );
-      sshClient.sendCommand(awsCCredentials?.buildCommand);
-      sshClient.sendCommand(awsCCredentials?.startCommand);
+      buildData.status = "SUCCESS";
+      awsCCredentials.lastBuildStatus = "SUCCESS";
 
       //start the build event
     } catch (error) {
-      throw error;
+      if (error instanceof Error) {
+        buildData.buildOutPut.push(error?.message);
+      } else {
+        buildData.buildOutPut.push("Something went wrong");
+      }
+      buildData.status = "FAILED";
+      awsCCredentials.lastBuildStatus = "FAILED";
+    } finally {
+      await buildData.save();
+      await awsCCredentials.save();
     }
   }
 }
