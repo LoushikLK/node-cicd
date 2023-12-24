@@ -32,7 +32,7 @@ export default class HookController {
           break;
       }
 
-      // await this.service.handlePushEvent(req.body);
+      await this.service.handlePushEvent(req.body);
 
       //send response to client
       res.json({

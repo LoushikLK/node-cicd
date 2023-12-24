@@ -149,49 +149,35 @@ export default class HookService {
         ?.split("https://")
         ?.at(-1);
 
+      let allCommand = [];
+
+      //remove already created repository
+      if (repositoryName) allCommand.push(`rm -rf ${repositoryName}`);
+
+      //clone the project
+      allCommand.push(`git clone https://${accessToken}@${repositoryUrl}`);
+
+      //change directory to the projects directory
+      if (repositoryName) allCommand.push(`cd ${repositoryName}`);
+
+      //apply users build command
+      if (awsCCredentials?.buildCommand)
+        allCommand.push(awsCCredentials?.buildCommand);
+
+      //apply users start command
+      if (awsCCredentials?.startCommand)
+        allCommand.push(awsCCredentials?.startCommand);
+
+      //run all command to the remote server
       const command = await sendCommand({
         host: awsCCredentials?.awsId?.publicIp,
         privateKey: awsCCredentials?.awsId?.privateKey,
         username: awsCCredentials?.awsId?.username,
-        command: `rm -rf ${repositoryName}`,
+        command: allCommand?.join("\n"),
       });
 
       buildData.buildOutPut.push(command);
       await buildData.save();
-
-      const command2 = await sendCommand({
-        host: awsCCredentials?.awsId?.publicIp,
-        privateKey: awsCCredentials?.awsId?.privateKey,
-        username: awsCCredentials?.awsId?.username,
-        command: `git clone https://${accessToken}@${repositoryUrl}`,
-      });
-      buildData.buildOutPut.push(command2);
-      await buildData.save();
-      const command3 = await sendCommand({
-        host: awsCCredentials?.awsId?.publicIp,
-        privateKey: awsCCredentials?.awsId?.privateKey,
-        username: awsCCredentials?.awsId?.username,
-        command: `cd ${repositoryName}`,
-      });
-      buildData.buildOutPut.push(command3);
-      await buildData.save();
-      const command4 = await sendCommand({
-        host: awsCCredentials?.awsId?.publicIp,
-        privateKey: awsCCredentials?.awsId?.privateKey,
-        username: awsCCredentials?.awsId?.username,
-        command: awsCCredentials?.buildCommand,
-      });
-      buildData.buildOutPut.push(command4);
-      await buildData.save();
-      const command5 = await sendCommand({
-        host: awsCCredentials?.awsId?.publicIp,
-        privateKey: awsCCredentials?.awsId?.privateKey,
-        username: awsCCredentials?.awsId?.username,
-        command: awsCCredentials?.startCommand,
-      });
-      buildData.buildOutPut.push(command5);
-      await buildData.save();
-
       buildData.status = "SUCCESS";
       awsCCredentials.lastBuildStatus = "SUCCESS";
 
