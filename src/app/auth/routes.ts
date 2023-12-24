@@ -35,10 +35,6 @@ export default class AuthRouter {
       this.controller.userLogin.bind(this.controller)
     );
     this.router.get(
-      "/google/register",
-      passport.authenticate("google-register", { scope: ["profile", "email"] })
-    );
-    this.router.get(
       "/google/login",
       passport.authenticate("google-login", { scope: ["profile", "email"] })
     );

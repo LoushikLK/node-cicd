@@ -39,7 +39,6 @@ const topLevelMiddleware = (app: Application) => {
 
   //load passport strategies
 
-  new PassportService().passportGoogleRegisterStrategy();
   new PassportService().passportGoogleLoginStrategy();
 
   //passport middleware to serialize and deserialize
