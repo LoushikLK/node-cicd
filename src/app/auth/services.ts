@@ -136,9 +136,10 @@ export default class Service {
     password: string;
   }) => {
     //find user by email
-    const userData = await UserModel.findOne({
-      email,
-    });
+    const userData: (IUser & { rawPassword: string }) | null =
+      await UserModel.findOne({
+        email,
+      });
 
     if (!userData) throw new NotFound("User not found.");
 
@@ -151,7 +152,7 @@ export default class Service {
       throw new NotAcceptable("OTP expired.");
 
     //if everything correct change password
-    userData.password = password;
+    userData.rawPassword = password;
 
     //save the code in database
     await userData.save();

@@ -34,6 +34,8 @@ const topLevelMiddleware = (app: Application) => {
     })
   );
 
+  app.use(passport.initialize());
+
   //authenticate using session
   app.use(passport.authenticate("session"));
 

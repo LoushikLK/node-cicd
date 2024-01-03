@@ -16,7 +16,6 @@ export default class PassportService {
    */
   public async passportGoogleLoginStrategy() {
     passport.use(
-      "google-login",
       new GoogleStrategy(
         {
           clientID: envConfig().GoogleClientId,

@@ -289,11 +289,11 @@ export default class Controllers {
       const userToken = await this.service.generateUserToken(req?.user);
 
       //send token to the client
-      res.json({
-        msg: "Token generated successful.",
-        success: true,
-        token: userToken,
-      });
+      res
+        .status(403)
+        .redirect(
+          envConfig().LoginSuccessCallbackURL + `?redirect=${userToken}`
+        );
     } catch (error) {
       //handle error
       next(error);

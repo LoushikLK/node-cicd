@@ -36,15 +36,15 @@ export default class AuthRouter {
     );
     this.router.get(
       "/google/login",
-      passport.authenticate("google-login", { scope: ["profile", "email"] })
+      passport.authenticate("google", { scope: ["profile", "email"] })
     );
     this.router.get(
       "/google/callback",
-      passport.authenticate("google-login", {
+      passport.authenticate("google", {
         scope: ["profile", "email"],
-        successRedirect: envConfig().LoginSuccessCallbackURL,
         failureRedirect: envConfig().LoginFailedCallbackURL,
-      })
+      }),
+      this.controller.createUserToken.bind(this.controller)
     );
 
     this.router.get(
