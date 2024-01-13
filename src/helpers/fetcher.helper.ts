@@ -13,13 +13,18 @@ type Options = {
 };
 
 const useFetch = async (url: string, options?: Options) => {
-  const response = await fetch(url, options);
+  try {
+    const response = await fetch(url, options);
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (response.statusText !== "OK") throw new Error(data?.error);
+    if (response.statusText !== "OK")
+      throw new Error(data?.message || data?.error || response.statusText);
 
-  return data;
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export default useFetch;

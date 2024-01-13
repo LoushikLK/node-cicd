@@ -333,7 +333,7 @@ export default class Controllers {
         .status(203)
         .redirect(
           envConfig().GithubInstallationRedirectUrl +
-            `?token=${token}&reload=true`
+            `?redirect=${token}&reload=true`
         );
     } catch (error) {
       //handle error

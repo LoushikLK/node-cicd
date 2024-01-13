@@ -77,15 +77,15 @@ export default class GithubService {
       _id: githubId,
       userId,
     }).select(
-      "userId accessToken refreshToken accessTokenExpireAt refreshTokenExpireAt"
+      "userId accessToken refreshToken accessTokenExpireAt refreshTokenExpireAt githubId"
     );
 
     if (!githubAccount) throw new NotFound("Github account not found");
 
-    if (!githubAccount?.accessTokenExpireAt)
+    if (!githubAccount?.refreshTokenExpireAt)
       throw new Unauthorized("No access token provided reinstall github app");
 
-    let accessToken = generateAccessToken(githubId);
+    let accessToken = await generateAccessToken(githubAccount?.githubId);
 
     if (!accessToken) throw new Error("Access token not found");
 
@@ -107,16 +107,11 @@ export default class GithubService {
     userId: string,
     repo: string
   ) {
-    //delete all project associated with this aws account
-
-    await ProjectModel.deleteMany({
-      githubId: githubId,
-    });
     const githubAccount = await GithubModel.findOne({
       _id: githubId,
       // userId,
     }).select(
-      "userId accessToken refreshToken accessTokenExpireAt refreshTokenExpireAt"
+      "userId accessToken refreshToken accessTokenExpireAt refreshTokenExpireAt githubId githubUserName"
     );
 
     if (!githubAccount) throw new NotFound("Github account not found");
@@ -124,12 +119,12 @@ export default class GithubService {
     if (!githubAccount?.accessTokenExpireAt)
       throw new Unauthorized("No access token provided reinstall github app");
 
-    let accessToken = generateAccessToken(githubId);
+    let accessToken = await generateAccessToken(githubAccount?.githubId);
 
-    if (!accessToken) throw new Error("Access token not found");
+    if (!accessToken) throw new NotFound("Access token not found");
 
     const branched = await useFetch(
-      `https://api.github.com/repos/LoushikLk/${repo}/branches`,
+      `https://api.github.com/repos/${githubAccount?.githubUserName}/${repo}/branches`,
       {
         method: "GET",
         headers: {

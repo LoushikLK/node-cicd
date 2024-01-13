@@ -252,6 +252,7 @@ export default class Service {
         refreshTokenExpireAt: new Date(
           Date.now() + tokenResponse?.refresh_token_expires_in * 1000
         ),
+        githubUserName: userData?.login,
       },
       {
         upsert: true,
