@@ -2,4 +2,3 @@ node_modules
 .env
 github-private-key.pem
 aws-cicd-key-pair.pem
-build
