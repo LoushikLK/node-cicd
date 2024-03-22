@@ -101,6 +101,36 @@ export default class GithubController {
       next(error);
     }
   }
+  public async getGithubRepoDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      //get id from param
+      const githubId = req.params?.githubId;
+
+      const repo = req.params?.repo;
+
+      const repository = await this.service.getRepositoriesDetails(
+        githubId,
+        req?.currentUser?._id,
+        repo
+      );
+
+      //send response to client
+      res.json({
+        msg: "Github repository fetched",
+        success: true,
+        data: {
+          data: repository,
+        },
+      });
+    } catch (error) {
+      //handle error
+      next(error);
+    }
+  }
   public async deleteAccountById(
     req: Request,
     res: Response,

@@ -36,6 +36,12 @@ export default class GithubRouter extends AuthService {
       this.controllers.getGithubRepo.bind(this.controllers)
     );
     this.router.get(
+      "/branch/:githubId/:repo/details",
+      getGithubBranch(),
+      this.isAuthenticated,
+      this.controllers.getGithubRepoDetails.bind(this.controllers)
+    );
+    this.router.get(
       "/branch/:githubId/:repo",
       getGithubBranch(),
       this.isAuthenticated,

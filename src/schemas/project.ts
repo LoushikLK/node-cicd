@@ -11,10 +11,6 @@ const projectSchema = new Schema<IProject, Model<IProject>>(
       type: Schema.Types.ObjectId,
       ref: "Github",
     },
-    awsId: {
-      type: Schema.Types.ObjectId,
-      ref: "Aws",
-    },
     repositoryUrl: String,
     repositoryId: String,
     deployBranch: String,

@@ -40,7 +40,7 @@ export default class AwsController {
       //get data from req.body
       const project = await this.service.createNewProject({
         githubId,
-        awsId,
+
         repositoryUrl,
         repositoryId,
         deployBranch,
@@ -81,7 +81,7 @@ export default class AwsController {
     try {
       const {
         githubId,
-        awsId,
+
         repositoryUrl,
         deployBranch,
         defaultBranch,
@@ -110,7 +110,7 @@ export default class AwsController {
 
       await this.service.updateProjectService({
         githubId,
-        awsId,
+
         repositoryUrl,
         deployBranch,
         defaultBranch,

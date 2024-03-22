@@ -16,6 +16,8 @@ topLevelMiddleware(app); //setup middleware
 routerHandler(app); //setup routes
 bottomLevelMiddleware(app); //setup bottom middleware handles (e.g. error ,not found route)
 
-server.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
+// server.listen(PORT, () => {
+//   console.log(`Server started on port ${PORT}`);
+// });
+
+export default server;

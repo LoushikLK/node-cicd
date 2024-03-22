@@ -7,7 +7,7 @@ export default class AwsServices {
   constructor() {}
   public async createNewProject({
     githubId,
-    awsId,
+
     repositoryUrl,
     deployBranch,
     defaultBranch,
@@ -31,7 +31,7 @@ export default class AwsServices {
     awsRegion,
   }: {
     githubId: string;
-    awsId: string;
+
     repositoryUrl: string;
     deployBranch: string;
     defaultBranch: string;
@@ -56,7 +56,7 @@ export default class AwsServices {
   }) {
     const projectCreate = await ProjectModel.create({
       githubId,
-      awsId,
+
       repositoryUrl,
       deployBranch,
       defaultBranch,
@@ -86,7 +86,7 @@ export default class AwsServices {
   }
   public async updateProjectService({
     githubId,
-    awsId,
+
     repositoryUrl,
     deployBranch,
     defaultBranch,
@@ -110,7 +110,7 @@ export default class AwsServices {
     awsRegion,
   }: {
     githubId: string;
-    awsId: string;
+
     repositoryUrl: string;
     deployBranch: string;
     defaultBranch: string;
@@ -135,7 +135,7 @@ export default class AwsServices {
   }) {
     const project = await ProjectModel.findByIdAndUpdate(projectId, {
       githubId,
-      awsId,
+
       repositoryUrl,
       deployBranch,
       defaultBranch,
@@ -190,7 +190,7 @@ export default class AwsServices {
     searchTitle,
     pageNo,
     perPage,
-    awsId,
+
     githubId,
     userId,
   }: {
@@ -221,7 +221,6 @@ export default class AwsServices {
       ];
 
     if (githubId) dynamicQuery.githubId = githubId;
-    if (awsId) dynamicQuery.awsId = awsId;
 
     const projectData = await paginationHelper({
       model: ProjectModel,

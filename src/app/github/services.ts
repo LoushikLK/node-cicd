@@ -109,7 +109,7 @@ export default class GithubService {
   ) {
     const githubAccount = await GithubModel.findOne({
       _id: githubId,
-      // userId,
+      userId,
     }).select(
       "userId accessToken refreshToken accessTokenExpireAt refreshTokenExpireAt githubId githubUserName"
     );
@@ -135,5 +135,39 @@ export default class GithubService {
     );
 
     return branched;
+  }
+  public async getRepositoriesDetails(
+    githubId: string,
+    userId: string,
+    repo: string
+  ) {
+    const githubAccount = await GithubModel.findOne({
+      _id: githubId,
+      userId,
+    }).select(
+      "userId accessToken refreshToken accessTokenExpireAt refreshTokenExpireAt githubId githubUserName"
+    );
+
+    if (!githubAccount) throw new NotFound("Github account not found");
+
+    if (!githubAccount?.accessTokenExpireAt)
+      throw new Unauthorized("No access token provided reinstall github app");
+
+    let accessToken = await generateAccessToken(githubAccount?.githubId);
+
+    if (!accessToken) throw new NotFound("Access token not found");
+
+    const repository = await useFetch(
+      `https://api.github.com/repos/${githubAccount?.githubUserName}/${repo}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return repository;
   }
 }

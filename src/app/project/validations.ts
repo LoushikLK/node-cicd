@@ -9,17 +9,12 @@ export const createProject = () => {
         .notEmpty()
         .isMongoId()
         .withMessage("githubId is not valid"),
-      body("awsId").notEmpty().isMongoId().withMessage("awsId is not valid"),
       body("repositoryUrl")
         .notEmpty()
         .withMessage("repositoryUrl is required.")
         .isURL()
         .withMessage("provide a valid repositoryUrl."),
-      body("repositoryId")
-        .notEmpty()
-        .withMessage("repositoryId is required.")
-        .isString()
-        .withMessage("provide a valid repositoryId."),
+      body("repositoryId").notEmpty().withMessage("repositoryId is required."),
       body("deployBranch")
         .notEmpty()
         .withMessage("deployBranch is required.")
@@ -65,10 +60,34 @@ export const createProject = () => {
         .optional()
         .isString()
         .withMessage("enter a valid deployCommit."),
-      body("availableBranch")
+      body("availableBranch*")
         .optional()
         .isString()
         .withMessage("enter a valid availableBranch."),
+      body("instanceId")
+        .optional()
+        .isString()
+        .withMessage("instanceId must be a string"),
+      body("username")
+        .notEmpty()
+        .withMessage("username is required.")
+        .isString()
+        .withMessage("provide a valid username."),
+      body("privateKey")
+        .notEmpty()
+        .withMessage("privateKey is required.")
+        .isString()
+        .withMessage("provide a valid privateKey."),
+      body("publicIp")
+        .notEmpty()
+        .withMessage("publicIp is required.")
+        .isIP()
+        .withMessage("provide a valid publicIp."),
+      body("awsRegion")
+        .notEmpty()
+        .withMessage("awsRegion is required.")
+        .isString()
+        .withMessage("provide a valid awsRegion."),
     ];
 
     await formValidatorHelper(validations, req, res, next);
@@ -85,7 +104,6 @@ export const updateProject = () => {
         .optional()
         .isMongoId()
         .withMessage("githubId is not valid"),
-      body("awsId").optional().isMongoId().withMessage("awsId is not valid"),
       body("repositoryUrl")
         .optional()
         .isURL()
@@ -138,6 +156,26 @@ export const updateProject = () => {
         .optional()
         .isString()
         .withMessage("enter a valid availableBranch."),
+      body("instanceId")
+        .optional()
+        .isString()
+        .withMessage("instanceId must be a string"),
+      body("username")
+        .optional()
+        .isString()
+        .withMessage("provide a valid username."),
+      body("privateKey")
+        .optional()
+        .isString()
+        .withMessage("provide a valid privateKey."),
+      body("publicIp")
+        .optional()
+        .isIP()
+        .withMessage("provide a valid publicIp."),
+      body("awsRegion")
+        .optional()
+        .isString()
+        .withMessage("provide a valid awsRegion."),
     ];
 
     await formValidatorHelper(validations, req, res, next);

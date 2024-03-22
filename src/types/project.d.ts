@@ -3,7 +3,6 @@ import { Document, ObjectId } from "mongoose";
 export default interface IProject extends Document {
   userId: ObjectId;
   githubId: ObjectId;
-  awsId: ObjectId;
   repositoryUrl: string;
   repositoryId: string;
   deployBranch: string;
