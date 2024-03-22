@@ -31,6 +31,11 @@ export default class AwsController {
         availableBranch,
         metadata,
         repositoryId,
+        instanceId,
+        username,
+        publicIp,
+        privateKey,
+        awsRegion,
       } = req.body;
       //get data from req.body
       const project = await this.service.createNewProject({
@@ -52,6 +57,11 @@ export default class AwsController {
         availableBranch,
         metadata,
         userId: req?.currentUser?._id,
+        instanceId,
+        username,
+        publicIp,
+        privateKey,
+        awsRegion,
       });
 
       //send response to client
@@ -87,6 +97,11 @@ export default class AwsController {
         availableBranch,
         metadata,
         repositoryId,
+        instanceId,
+        username,
+        publicIp,
+        privateKey,
+        awsRegion,
       } = req.body;
       //get data from req.body
 
@@ -112,6 +127,11 @@ export default class AwsController {
         metadata,
         projectId,
         repositoryId,
+        instanceId,
+        username,
+        publicIp,
+        privateKey,
+        awsRegion,
       });
 
       //send response to client

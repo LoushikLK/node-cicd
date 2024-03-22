@@ -20,4 +20,9 @@ export default interface IProject extends Document {
   isPrivate: boolean;
   availableBranch: string[];
   metadata: any[];
+  instanceId: string;
+  username: string;
+  publicIp: string;
+  privateKey: string;
+  awsRegion: string;
 }

@@ -24,6 +24,11 @@ export default class AwsServices {
     metadata,
     userId,
     repositoryId,
+    instanceId,
+    username,
+    publicIp,
+    privateKey,
+    awsRegion,
   }: {
     githubId: string;
     awsId: string;
@@ -43,6 +48,11 @@ export default class AwsServices {
     metadata: any;
     userId: string;
     repositoryId: string;
+    instanceId: string;
+    username: string;
+    publicIp: string;
+    privateKey: string;
+    awsRegion: string;
   }) {
     const projectCreate = await ProjectModel.create({
       githubId,
@@ -63,6 +73,11 @@ export default class AwsServices {
       metadata,
       userId,
       repositoryId,
+      instanceId,
+      username,
+      publicIp,
+      privateKey,
+      awsRegion,
     });
 
     if (!projectCreate) throw new BadRequest("Project create failed");
@@ -88,6 +103,11 @@ export default class AwsServices {
     metadata,
     projectId,
     repositoryId,
+    instanceId,
+    username,
+    publicIp,
+    privateKey,
+    awsRegion,
   }: {
     githubId: string;
     awsId: string;
@@ -107,6 +127,11 @@ export default class AwsServices {
     metadata: any;
     projectId: string;
     repositoryId: string;
+    instanceId: string;
+    username?: string;
+    publicIp?: string;
+    privateKey?: string;
+    awsRegion?: string;
   }) {
     const project = await ProjectModel.findByIdAndUpdate(projectId, {
       githubId,
@@ -126,6 +151,11 @@ export default class AwsServices {
       availableBranch,
       metadata,
       repositoryId,
+      instanceId,
+      username,
+      publicIp,
+      privateKey,
+      awsRegion,
     });
 
     if (!project) throw new BadRequest("Project not found");
@@ -140,10 +170,6 @@ export default class AwsServices {
           path: "githubId",
           select:
             "isDefault owner appInstalled githubProfileImage githubProfileUrl accessPrivate accessPublic",
-        },
-        {
-          path: "awsId",
-          select: "instanceId username publicIp awsRegion isDefault",
         },
       ]);
 
@@ -208,10 +234,6 @@ export default class AwsServices {
           path: "githubId",
           select:
             "isDefault owner appInstalled githubProfileImage githubProfileUrl accessPrivate accessPublic",
-        },
-        {
-          path: "awsId",
-          select: "instanceId username publicIp awsRegion isDefault",
         },
       ],
     });

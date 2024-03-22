@@ -48,6 +48,11 @@ const projectSchema = new Schema<IProject, Model<IProject>>(
         type: Schema.Types.Mixed,
       },
     ],
+    instanceId: String,
+    username: String,
+    publicIp: String,
+    privateKey: String,
+    awsRegion: String,
   },
   {
     timestamps: true,

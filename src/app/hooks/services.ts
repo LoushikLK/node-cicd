@@ -3,7 +3,6 @@ import { BuildModel } from "../../schemas/build";
 import { GithubModel } from "../../schemas/github";
 import { ProjectModel } from "../../schemas/project";
 import sendCommand from "../../services/ssh.service";
-import { IAws } from "../../types/aws";
 import { IGithub } from "../../types/github";
 import { Installation } from "../../types/installation";
 import IProject from "../../types/project";
@@ -114,13 +113,9 @@ export default class HookService {
     if (!buildData) return;
 
     //find the aws credentials
-    const awsCCredentials: IProject & { awsId: IAws; githubId: IGithub } =
+    const awsCCredentials: IProject & { githubId: IGithub } =
       await ProjectModel.findById(projectId)
         .populate([
-          {
-            path: "awsId",
-            select: "username publicIp privateKey",
-          },
           {
             path: "githubId",
             select: "_id githubId",
@@ -170,9 +165,9 @@ export default class HookService {
 
       //run all command to the remote server
       const command = await sendCommand({
-        host: awsCCredentials?.awsId?.publicIp,
-        privateKey: awsCCredentials?.awsId?.privateKey,
-        username: awsCCredentials?.awsId?.username,
+        host: awsCCredentials?.publicIp,
+        privateKey: awsCCredentials?.privateKey,
+        username: awsCCredentials?.username,
         command: allCommand?.join("\n"),
       });
 
